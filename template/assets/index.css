@@ -88,10 +88,10 @@ body {
 .markdown-body:not(.docp-block) img {
   max-width: 100%;
   display: inline-block;
-  position: relative;
-  margin: 32px 32px 32px 0;
-  min-width: 50px;
-  min-height: 50px;
+  box-sizing: border-box;
+  border: .3em solid #e0dfcc;
+  border-radius: 1em;
+  background-color: #e0dfcc;
 }
 
 .docp-block {

@@ -1,4 +1,3 @@
-import joinPath from 'memory-fs/lib/join';
 import path from 'path';
 import colors from 'colors';
 
@@ -89,4 +88,4 @@ export const printLog = {
     const tag = '[error]';
     console.log(tag, color(msg));
   }
-}
+};

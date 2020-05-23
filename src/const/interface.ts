@@ -1,4 +1,4 @@
-import Page from '../model/page';
+import Vinyl from 'vinyl';
 
 export interface DocpConfig {
   src: string;
@@ -8,7 +8,7 @@ export interface DocpConfig {
 }
 
 export interface ICode {
-  host: Page,
+  host: Vinyl | null,
   containerId: string,
   type: string,
   value: string

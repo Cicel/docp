@@ -14,8 +14,6 @@
   "scripts": {
     "dev": "tsc --watch",
     "build": "tsc --build tsconfig.json && npm run theme",
-    "theme:watch": "sass --watch --no-source-map template/typora.vue.scss template/assets/typora.vue.css",
-    "theme": "sass --no-source-map template/typora.vue.scss template/assets/typora.vue.css",
     "lint": "eslint src/** --quiet",
     "lint:fix": "eslint src/*.ts --fix",
     "test": "echo \"Error: no test specified\" && exit 1"

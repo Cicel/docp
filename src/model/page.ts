@@ -8,11 +8,11 @@ import fs from 'fs-extra';
 import { getHightlightComponentByType } from '../utils';
 
 export default class Page {
-  static codeMap: Map<string, Array<ICode>> = new Map()
   static globalSummaryFile: Vinyl | null = null
   contentFile: Vinyl | null = null
   inlineSources: Array<string> = []
   externalSources: Array<string> = []
+  codeList: Map<string, Array<ICode>> = new Map()
 
   async generate(markdownFile: Vinyl) {
     if (markdownFile.stem.toUpperCase() === 'SUMMARY') {
@@ -60,7 +60,7 @@ export default class Page {
       document.querySelector('head').appendChild(script);
     });
     // 插入高亮代码
-    for (const type of Page.codeMap.keys()) {
+    for (const type of this.codeList.keys()) {
       const hightlightComponent = getHightlightComponentByType(type);
       // 插入高亮脚本
       if (hightlightComponent) {
@@ -131,15 +131,15 @@ export default class Page {
         const containerId = markdown.stem + '_' + index;
         const container = `<div id="${containerId}"></div>`;
         const code: ICode = {
-          host: this,
+          host: this.contentFile,
           containerId: containerId,
           type: execType,
           value: codeString.replace('$CONTAINER_ID', `'${containerId}'`), // 替换占位符$CONTAINER_ID
         }
-        if (!Page.codeMap.has(execType)) {
-          Page.codeMap.set(execType, [])
+        if (!this.codeList.has(execType)) {
+          this.codeList.set(execType, [])
         }
-        Page.codeMap.get(execType)!.push(code)
+        this.codeList.get(execType)!.push(code)
         // 包裹codeblock容器
         result = this.wrapCodeBlock(container, result);
       }
