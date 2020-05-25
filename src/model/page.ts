@@ -7,16 +7,26 @@ import path from 'path';
 import fs from 'fs-extra';
 import { getHightlightComponentByType } from '../utils';
 
+export enum PAGT_TYPE {
+  SUMMARY,
+  CONTENT
+}
+
 export default class Page {
   static globalSummaryFile: Vinyl | null = null
   contentFile: Vinyl | null = null
+  // 外部赋值
   inlineSources: Array<string> = []
+  // 外部赋值
   externalSources: Array<string> = []
-  codeList: Map<string, Array<ICode>> = new Map()
+  execCodes: Map<string, Array<ICode>> = new Map()
+  infoStrings:  Map<string, boolean> = new Map()
+  type = PAGT_TYPE.CONTENT
 
   async generate(markdownFile: Vinyl) {
     if (markdownFile.stem.toUpperCase() === 'SUMMARY') {
       Page.globalSummaryFile = await this.generateSummary(markdownFile)
+      this.type = PAGT_TYPE.SUMMARY
       return
     }
     this.contentFile = await this.generatePage(markdownFile)
@@ -30,12 +40,12 @@ export default class Page {
     const document = new JSDOM(template).window.document;
 
     // 添加内容
-    document.querySelector('.markdown-body').innerHTML = this.contentFile!.contents!.toString();
+    document.querySelector('#slot').innerHTML = this.contentFile!.contents!.toString();
     if (Page.globalSummaryFile !== null) {
       const summaryDOM = new JSDOM(Page.globalSummaryFile!.contents?.toString());
       const list: any = summaryDOM?.window.document.querySelectorAll('a');
       for (let i = 0; i < list.length; i++) {
-        if (list[i].href.indexOf(encodeURIComponent(this.contentFile!!.stem)) > -1) {
+        if (list[i].href.indexOf(encodeURIComponent(this.contentFile!.stem)) > -1) {
           list[i].classList.add('current');
           break;
         }
@@ -60,7 +70,7 @@ export default class Page {
       document.querySelector('head').appendChild(script);
     });
     // 插入高亮代码
-    for (const type of this.codeList.keys()) {
+    for (const type of this.infoStrings.keys()) {
       const hightlightComponent = getHightlightComponentByType(type);
       // 插入高亮脚本
       if (hightlightComponent) {
@@ -113,7 +123,7 @@ export default class Page {
     }
     const file = markdown
     file.contents = Buffer.from(summary.outerHTML)
-    file.extname = '.html'
+    file.extname = ''
     return file
   }
 
@@ -121,25 +131,26 @@ export default class Page {
     let index = 0;
     return (codeString: string, infostring: string = 'markup', escaped: string): string => {
       index++;
-      const { lowerInfoString, isExecable, execType } = this.parseInfoString(infostring)
+      const { codeType, isExecable, execType } = this.parseInfoString(infostring)
       // 渲染代码块
-      let result = primaryRenderCode(codeString, lowerInfoString, escaped);
-
+      let result = primaryRenderCode(codeString, codeType, escaped);
+      // 记录infostring
+      this.infoStrings.set(codeType, true)
       // 添加line-numbers
-      result = result.replace('<pre>', `<pre class="line-numbers language-${lowerInfoString}">`);
+      result = result.replace('<pre>', `<pre class="line-numbers language-${codeType}">`);
       if (isExecable) {
         const containerId = markdown.stem + '_' + index;
         const container = `<div id="${containerId}"></div>`;
         const code: ICode = {
-          host: this.contentFile,
+          origin: markdown,
           containerId: containerId,
           type: execType,
           value: codeString.replace('$CONTAINER_ID', `'${containerId}'`), // 替换占位符$CONTAINER_ID
         }
-        if (!this.codeList.has(execType)) {
-          this.codeList.set(execType, [])
+        if (!this.execCodes.has(execType)) {
+          this.execCodes.set(execType, [])
         }
-        this.codeList.get(execType)!.push(code)
+        this.execCodes.get(execType)!.push(code)
         // 包裹codeblock容器
         result = this.wrapCodeBlock(container, result);
       }
@@ -153,12 +164,12 @@ export default class Page {
    */
   private parseInfoString(infostring: string): any {
     const args = infostring.split('--');
-    const lowerInfoString = args[0].toLowerCase().trim();
+    const codeType = args[0].toLowerCase().trim();
     const execString = args[1] || '';
     const isExecable = execString.indexOf('exec') > -1; // todo 硬编码先
     const execType = execString.split('=')[1] || 'default';
     return {
-      lowerInfoString: lowerInfoString,
+      codeType: codeType,
       isExecable: isExecable,
       execType: execType
     }

@@ -13,7 +13,7 @@
   ],
   "scripts": {
     "dev": "tsc --watch",
-    "build": "tsc --build tsconfig.json && npm run theme",
+    "build": "tsc --build tsconfig.json",
     "lint": "eslint src/** --quiet",
     "lint:fix": "eslint src/*.ts --fix",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -42,6 +42,13 @@
     "@types/vinyl": "^2.0.4",
     "@typescript-eslint/eslint-plugin": "^2.22.0",
     "@typescript-eslint/parser": "^2.22.0",
-    "eslint": "^6.8.0"
+    "eslint": "^6.8.0",
+    "@babel/core": "^7.7.7",
+    "@babel/plugin-syntax-jsx": "^7.7.4",
+    "@babel/plugin-transform-react-display-name": "^7.7.4",
+    "@babel/plugin-transform-react-jsx": "^7.7.7",
+    "@babel/preset-env": "^7.7.7",
+    "@babel/preset-react": "^7.7.4",
+    "babel-loader": "^8.0.6"
   }
 }

@@ -94,6 +94,11 @@ body {
   background-color: #e0dfcc;
 }
 
+.markdown-body .support {
+  text-align: center;
+  margin-top: 2em;
+}
+
 .docp-block {
   position: relative;
   padding: 12px 12px 12px;

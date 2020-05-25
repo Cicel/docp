@@ -8,7 +8,7 @@ export interface DocpConfig {
 }
 
 export interface ICode {
-  host: Vinyl | null,
+  origin: Vinyl | null,
   containerId: string,
   type: string,
   value: string
