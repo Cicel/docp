@@ -7,6 +7,7 @@ const configFileName = 'docp.config.js';
 class DocpConfig {
   rootDir: string = ''
   outDir: string = ''
+  file: string = ''
   port: number = 3000
   configPath: string = ''
   template: string = path.resolve(__dirname, '../../template/article.html')
@@ -33,6 +34,26 @@ class DocpConfig {
     }
     const result = 'module.exports = ' + JSON.stringify(output, null, 2)
     fs.outputFileSync(this.getConfigFileDir(), result);
+  }
+
+  getFilePath() {
+    if (this.file) {
+      return this.file
+    }
+    if (this.rootDir) {
+      return this.rootDir + '*.md'
+    }
+    return path.resolve(process.cwd(), '*.md')
+  }
+
+  getFileDir() {
+    if (this.file) {
+      return this.file
+    }
+    if (this.rootDir) {
+      return this.rootDir
+    }
+    return process.cwd()
   }
 }
 

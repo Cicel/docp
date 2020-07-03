@@ -14,6 +14,7 @@ program
   .option('-h, --help')
   .option('--rootDir <dir>')
   .option('--outDir <dir>')
+  .option('--file <path>')
   .option('--config <path>')
   .option('--port <port>')
   .option('--configPath <path>')
@@ -35,6 +36,7 @@ if (process.argv.length === 2 || process.argv.indexOf('--help') > -1 || process.
   console.log('  -h, --help         Print this message.');
   console.log('  --rootDir          Specifies the root directory of input files. Default to current directory.');
   console.log('  --outDir           Specifies the directory for output files. Default to ./docsite.');
+  console.log('  --file             Specifies the file to be compiled.');
   console.log('  --port             Specify local server port.');
   console.log('  --configPath       Specify the configuration file path when init.');
   console.log('  --template         Specify the HTML template to replace the built-in template.');

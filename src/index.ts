@@ -1,5 +1,3 @@
-import process from 'process';
-import path from 'path';
 import vfs from 'vinyl-fs';
 import watch from 'node-watch';
 import parseMarkdown from './parse-markdown';
@@ -29,9 +27,9 @@ export function dev() {
   // start server
   startServer();
   // first build
-  vfs.src(path.resolve(process.cwd(), docpConfig.rootDir, '*.md')).pipe(parseMarkdown()).pipe(devMode());
+  vfs.src(docpConfig.getFilePath()).pipe(parseMarkdown()).pipe(devMode());
   // watch
-  watch(path.resolve(process.cwd(), docpConfig.rootDir), (evt, filePath) => {
+  watch(docpConfig.getFileDir(), (evt, filePath) => {
     if (filePath.split('.').pop() !== 'md') {
       return;
     }
@@ -44,5 +42,5 @@ export function dev() {
 }
 
 export function build() {
-  return vfs.src(path.resolve(docpConfig.rootDir, '*.md')).pipe(parseMarkdown()).pipe(dest(docpConfig.outDir));
+  return vfs.src(docpConfig.getFileDir()).pipe(parseMarkdown()).pipe(dest(docpConfig.outDir));
 }

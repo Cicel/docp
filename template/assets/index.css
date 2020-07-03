@@ -81,7 +81,7 @@ body {
   min-height: 100%;
   box-sizing: border-box;
   -ms-overflow-style: none;
-  padding-bottom: 2em;
+  padding-bottom: 4em;
 }
 
 .markdown-body::-webkit-scrollbar {
@@ -101,6 +101,7 @@ body {
   width: 100%;
   bottom: 0;
   text-align: center;
+  position: absolute;
 }
 
 .docp-block {
