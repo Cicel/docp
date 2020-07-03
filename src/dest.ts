@@ -7,7 +7,7 @@ export default function (destPath: string) {
   const outputPath = path.resolve(destPath);
   return through2.obj(function (file, enc, callback) {
     const htmlPath = outputPath + '/' + file?.stem + '.html';
-    fs.outputFileSync(htmlPath, file!.contents!.toString());
+    fs.outputFileSync(htmlPath, file.contents.toString());
     callback();
   }, function (callback) {
     fs.copySync(path.resolve(__dirname, '../template/assets'), outputPath + '/assets');

@@ -1,11 +1,11 @@
 import Vinyl from 'vinyl';
 import marked from 'marked';
 import { JSDOM } from "jsdom";
-import { ICode } from '../const/interface';
-import { docpConfig } from './docp-config';
+import docpConfig from './docp-config';
 import path from 'path';
 import fs from 'fs-extra';
 import { getHightlightComponentByType } from '../utils';
+import { ICode } from '../typings/global';
 
 export enum PAGT_TYPE {
   SUMMARY,
@@ -35,7 +35,6 @@ export default class Page {
   outputHTML(): Vinyl | null {
     const commonScripts = docpConfig.scripts;
     const commonStyles = docpConfig.styles;
-
     const template = fs.readFileSync(path.resolve(process.cwd(), docpConfig.template)).toString();
     const document = new JSDOM(template).window.document;
 

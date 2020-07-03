@@ -6,7 +6,7 @@ import parseMarkdown from './parse-markdown';
 import startServer from './server';
 import devMode from './dev-mode';
 import dest from './dest';
-import { docpConfig, outputConfigFile } from './model/docp-config';
+import docpConfig from './model/docp-config';
 import inquirer from 'inquirer';
 import { inputOverride, inputRootDir, inputOutDir } from './prompt-action';
 import { printLog } from './utils';
@@ -19,7 +19,9 @@ export async function init(hasConfig) {
     }
   }
   const { rootDir, outDir } = await inquirer.prompt([inputRootDir, inputOutDir]);
-  outputConfigFile(rootDir, outDir);
+  docpConfig.rootDir = rootDir
+  docpConfig.outDir = outDir
+  docpConfig.outputConfigFile();
   printLog.success('init done!');
 }
 
@@ -39,7 +41,7 @@ export function dev() {
     }
     vfs.src(filePath).pipe(parseMarkdown()).pipe(devMode());
   });
-};
+}
 
 export function build() {
   return vfs.src(path.resolve(docpConfig.rootDir, '*.md')).pipe(parseMarkdown()).pipe(dest(docpConfig.outDir));

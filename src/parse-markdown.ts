@@ -9,7 +9,8 @@ import through2 from 'through2';
 import Vinyl from 'vinyl';
 import { printLog } from './utils';
 import Page, { PAGT_TYPE } from './model/page';
-import { docpConfig } from './model/docp-config';
+import docpConfig from './model/docp-config';
+import path from 'path';
 
 const doneFunctions: Array<any> = [];
 
@@ -35,12 +36,12 @@ export default function () {
         this.push(html);
         return callback();
       }
-      const preset = getPresetByType(item.value[0]);
+      const plugin = getPluginByType(item.value[0]);
       // 暂存done callback，flush时调用
-      if (preset.done) {
-        doneFunctions.push({ page: page, done: preset.done });
+      if (plugin.done) {
+        doneFunctions.push({ page: page, done: plugin.done });
       }
-      preset.transform(item.value[1], (result: any = {}) => {
+      plugin.transform(item.value[1], (result: any = {}) => {
         page.inlineSources = result.inlineSources || [];
         page.externalSources = result.externalSources || [];
         walker(iterator);
@@ -54,7 +55,7 @@ export default function () {
     const walker = (iterator) => {
       const item = iterator.next();
       if (item.done) {
-        return callback()
+        return callback();
       }
       const page = item.value.page;
       const done = item.value.done;
@@ -70,24 +71,25 @@ export default function () {
   });
 }
 
-function getPresetByType(type) {
-  const preset = docpConfig.presets[type];
-  if (!preset) {
-    printLog.error(`preset of ${type} not defined`);
+function getPluginByType(type) {
+  const plugin = docpConfig.plugins[type];
+  if (!plugin) {
+    printLog.error(`plugin of ${type} not defined`);
     process.exit(0);
   }
-  if (typeof preset === 'function') {
+  const module = require(path.resolve(process.cwd(), plugin))
+  if (typeof module === 'function') {
     return {
-      transform: preset,
+      transform: module,
       done: null
     };
   }
-  if (typeof preset.transform !== 'function') {
-    printLog.error(`preset of ${type} must contain transform function`)
-    process.exit(0)
+  if (typeof module.transform !== 'function') {
+    printLog.error(`plugin of ${type} must contain transform function`);
+    process.exit(0);
   }
-  const transform = preset.transform;
-  const done = preset.done || null;
+  const transform = module.transform;
+  const done = module.done || null;
   return {
     transform,
     done

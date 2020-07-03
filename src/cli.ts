@@ -2,7 +2,7 @@
 import program from 'commander';
 import process from 'process';
 import { dev, build, init } from './index';
-import { docpConfig, hasConfigFile, getConfigFileDir } from './model/docp-config';
+import docpConfig from './model/docp-config';
 import { printLog } from './utils';
 
 const { version } = require('../package.json');
@@ -19,16 +19,15 @@ program
   .option('--configPath <path>')
   .option('--template <path>')
   .option('--scripts <string[]>')
-  .option('--styles <string[]>');
-
-program.parse(process.argv);
+  .option('--styles <string[]>')
+  .parse(process.argv);
 
 // show help
 if (process.argv.length === 2 || process.argv.indexOf('--help') > -1 || process.argv.indexOf('-h') > -1) {
   console.log('Docp version ' + version);
   console.log('');
   console.log('Commands:');
-  console.log('  init  [options]    Initialize and create docp.config.json to current dir.');
+  console.log('  init  [options]    Initialize and create docp.config.js to current dir.');
   console.log('  dev   [options]    Watch and preview locally.');
   console.log('  build [options]    Compile and output to the outDir.');
   console.log('');
@@ -51,10 +50,10 @@ Object.keys(docpConfig).forEach(key => {
   }
 });
 
-const hasConfig = hasConfigFile();
+const hasConfig = docpConfig.hasConfigFile();
 // 存在配置文件优先使用
 if (hasConfig) {
-  const configFile = getConfigFileDir();
+  const configFile = docpConfig.getConfigFileDir();
   const docpConfigFile = require(configFile);
   Object.assign(docpConfig, docpConfigFile);
 }

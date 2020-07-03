@@ -76,9 +76,12 @@ body {
 }
 
 .markdown-body {
+  position: relative;
   width: 840px;
+  min-height: 100%;
   box-sizing: border-box;
   -ms-overflow-style: none;
+  padding-bottom: 2em;
 }
 
 .markdown-body::-webkit-scrollbar {
@@ -95,8 +98,9 @@ body {
 }
 
 .markdown-body .support {
+  width: 100%;
+  bottom: 0;
   text-align: center;
-  margin-top: 2em;
 }
 
 .docp-block {

@@ -1,42 +1,39 @@
 import path from 'path';
 import fs from 'fs-extra';
+import { MarkedOption } from '../typings/global';
 
 const configFileName = 'docp.config.js';
-export function getDefaultConfigs() {
-  return {
-    rootDir: '',
-    outDir: 'docsite',
-    port: '3000',
-    configPath: './',
-    scripts: [],
-    styles: [],
-    template: path.resolve(__dirname, '../../template/article.html'),
-    presets: {}
+
+class DocpConfig {
+  rootDir: string = ''
+  outDir: string = ''
+  port: number = 3000
+  configPath: string = ''
+  template: string = path.resolve(__dirname, '../../template/article.html')
+  scripts: Array<string> = []
+  styles: Array<string> = []
+  marked: MarkedOption | null = null
+  plugins: Array<any> = []
+
+  getConfigFileDir() {
+    return path.resolve(process.cwd(), this.configPath, configFileName)
+  }
+
+  hasConfigFile() {
+    const configFile = this.getConfigFileDir();
+    return fs.pathExistsSync(configFile);
+  }
+
+  outputConfigFile() {
+    const output:any = {
+      rootDir: this.rootDir,
+      outDir: this.outDir,
+      template: this.template,
+      plugins: this.plugins
+    }
+    const result = 'module.exports = ' + JSON.stringify(output, null, 2)
+    fs.outputFileSync(this.getConfigFileDir(), result);
   }
 }
 
-export function getConfigFileDir() {
-  return path.resolve(process.cwd(), docpConfig.configPath, configFileName)
-}
-
-export function hasConfigFile() {
-  const configFile = getConfigFileDir();
-  return fs.pathExistsSync(configFile);
-}
-
-export function outputConfigFile(rootDir, outDir) {
-  const output = getDefaultConfigs();
-  output.rootDir = rootDir;
-  output.outDir = outDir;
-  delete output.port;
-  delete output.configPath;
-
-  const result = 'module.exports = ' + JSON.stringify(output, null, 2)
-  fs.outputFileSync(getConfigFileDir(), result);
-}
-
-/**
- * global get/set
- * with default values
- */
-export const docpConfig = getDefaultConfigs()
+export default new DocpConfig()

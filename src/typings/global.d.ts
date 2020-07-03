@@ -1,13 +1,19 @@
 import Vinyl from 'vinyl';
 
-export interface DocpConfig {
+interface MarkedOption {
+  baseUrl: string,
+  breaks: boolean,
+  gfm: boolean
+}
+
+interface DocpConfig {
   src: string;
   dest: string;
   scripts: Array<string>;
   styles: Array<string>;
 }
 
-export interface ICode {
+interface ICode {
   origin: Vinyl | null,
   containerId: string,
   type: string,
