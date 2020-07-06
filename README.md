@@ -2,7 +2,7 @@
 
 Docp is a documentation tool that compiles markdown to a  website. It provides the ability to execute JavaScript witch write in markdown. That means  you can preview any JavaScript even React or Vue！
 
-[Document](https://cicel.github.io/docp/README.html) | [中文文档](https://cicel.github.io/docp/README_ZH.html)
+[Document](https://cicel.github.io/docp/readme_en.html) | [中文文档](https://cicel.github.io/docp/readme_zh.html)
 
 ## Quick Start
 
