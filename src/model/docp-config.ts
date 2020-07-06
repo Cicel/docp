@@ -14,7 +14,7 @@ class DocpConfig {
   scripts: Array<string> = []
   styles: Array<string> = []
   marked: MarkedOption | null = null
-  plugins: Array<any> = []
+  plugins: any = {}
 
   getConfigFileDir() {
     return path.resolve(process.cwd(), this.configPath, configFileName)
@@ -41,7 +41,7 @@ class DocpConfig {
       return this.file
     }
     if (this.rootDir) {
-      return this.rootDir + '*.md'
+      return path.resolve(this.rootDir, '*.md')
     }
     return path.resolve(process.cwd(), '*.md')
   }

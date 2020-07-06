@@ -6,7 +6,7 @@
 
 ## 快速开始
 
-Docp是开箱即用的。指明需要预览的文件或目录，执行如下命令即可：
+`Docp`是开箱即用的。指明需要预览的文件或目录，执行如下命令即可：
 
 ```shell
 # 预览当前目录下所有markdown
@@ -41,7 +41,7 @@ module.exports = {
   "rootDir": "./",
   "outDir": "./docsite",
   "template": "~/template/article.html",
-  "plugins": []
+  "plugins": {}
 }
 ```
 
@@ -83,11 +83,13 @@ alert("Hello World")
 ​```
 ```
 
-我们在代码块的`infostring`上添加了标识：`--exec`。默认情况下Docp借助浏览器js引擎直接执行该段代码，因此你会看见一个hello world弹窗。
+我们在代码块的`infostring`上添加了标识：`--exec`。默认情况下`Docp`借助浏览器js引擎直接执行该段代码，因此你会看见一个hello world弹窗。
 
 
 
 你可以在代码块中使用各种DSL，比如React、Vue，但这需要预编译支持。Docp提供了一系列plugin，帮助你编译主流的DSL语法。你也可以自己编写plugin。
+
+
 
 #### 使用React
 
@@ -98,7 +100,7 @@ alert("Hello World")
 module.exports = {
 	...
   "plugins": {
-    "react": ["@docp/plugin-react", {...options}]
+    "react": "@docp/plugin-react"
   }
 }
 ```
@@ -124,6 +126,8 @@ ReactDOM.render(<Welcome/>, document.getElementById($CONTAINER_ID))
 ​```
 ```
 
+
+
 #### $CONTAINER_ID
 
 在上面的例子中，我们把`<Welcome/>`渲染在了`$CONTAINER_ID`上。`$CONTAINER_ID`表示当前代码块的上一级兄弟元素，方便你可以在页面上展示一些元素。
@@ -135,50 +139,33 @@ ReactDOM.render(<Welcome/>, document.getElementById($CONTAINER_ID))
 plugin本质上是一个函数，接受当前类型代码块的所有内容，输出可执行javascript。我们以[flowchart](https://flowchart.js.org/)为例，展示如何在markdown中显示流程图。
 
 ```javascript
+/**
+ * flowchart.plugin.js
+ * codes: array include all codes whitch has --exec type of flowchart.
+ * callback: function whitch will execute after plugin done.
+ */
 module.exports = function (codes, callback) {
 
+  // Define inlineSources and externalSources flowchart needed
   const inlineSources = []
   const externalSources = ['https://cdn.bootcdn.net/ajax/libs/raphael/2.3.0/raphael.js', 'https://cdn.bootcdn.net/ajax/libs/flowchart/1.13.0/flowchart.js']
 
+  // flowchart options
   const options = `var options = {
     'x': 0,
     'y': 0,
     'line-width': 3,
-    'line-length': 50,
-    'text-margin': 10,
-    'font-size': 14,
-    'font-color': 'black',
-    'line-color': 'black',
-    'element-color': 'black',
-    'fill': 'white',
-    'yes-text': 'yes',
-    'no-text': 'no',
-    'arrow-end': 'block',
-    'scale': 1,
-    // style symbol types
-    'symbols': {
-      'start': {
-        'font-color': 'red',
-        'element-color': 'green',
-        'fill': 'yellow'
-      },
-      'end':{
-        'class': 'end-element'
-      }
-    },
-    // even flowstate support ;-)
-    'flowstate' : {
-      'past' : { 'fill' : '#CCCCCC', 'font-size' : 12},
-      'current' : {'fill' : 'yellow', 'font-color' : 'red', 'font-weight' : 'bold'},
-      'future' : { 'fill' : '#FFFF99'},
-      'request' : { 'fill' : 'blue'},
-      'invalid': {'fill' : '#444444'},
-      'approved' : { 'fill' : '#58C4A3', 'font-size' : 12, 'yes-text' : 'APPROVED', 'no-text' : 'n/a' },
-      'rejected' : { 'fill' : '#C45879', 'font-size' : 12, 'yes-text' : 'n/a', 'no-text' : 'REJECTED' }
-    }
   }`
+
+  /**
+   * push options to inlineSources thus
+   * each page include flowchart will has this options
+   */
   inlineSources.push(options)
 
+  /**
+   * loop codes and append extra logic.
+   */
   codes.forEach((code) => {
     const { containerId, value } = code
     inlineValue = value.replace('\n', '')
@@ -186,6 +173,12 @@ module.exports = function (codes, callback) {
     diagram.drawSVG("${containerId}", options);`
     inlineSources.push(inlineSource)
   })
+
+  /**
+   * docp will append inlineSources as inline scripts
+   * and externalSources as external scripts to page
+   * whitch has --exec type of flowchart
+   */
   callback({
     inlineSources,
     externalSources
@@ -207,7 +200,7 @@ module.exports = function (codes, callback) {
 module.exports = {
 	...
   "plugins": {
-    "flowchart": ["./flowchart.js"] // 本地相对路径
+    "flowchart": "./flowchart.js" // 本地相对路径
   }
 }
 ```
@@ -239,5 +232,5 @@ para(path2, top)->op1
 
 效果如图所示：
 
-<img src="http://img.tanghb.cn/20200703161507.jpg" style="zoom:50%;" />
+<img src="http://img.tanghb.cn/20200706192720.jpg " />
 
