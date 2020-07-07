@@ -16,9 +16,6 @@ const doneFunctions: Array<any> = [];
 
 export default function () {
   return through2.obj(async function (file: Vinyl, enc: string, callback: Function) {
-    if (file.extname !== '.md') {
-      return callback();
-    }
     const page = new Page();
     await page.generate(file);
     printLog.success(`compile ${file.basename} done `);
@@ -27,10 +24,10 @@ export default function () {
       return callback();
     }
 
-    // 遍历transformFunctions
+    // page输出html，如存在execCodes，暂存到doneFunctions
     const iterator = page.execCodes.entries();
-    const walker = async (iterator) => {
-      const item = iterator.next();
+    const walker = async (it) => {
+      const item = it.next();
       if (item.done) {
         const html = await page.outputHTML();
         this.push(html);
@@ -44,7 +41,7 @@ export default function () {
       plugin.transform(item.value[1], (result: any = {}) => {
         page.inlineSources = result.inlineSources || [];
         page.externalSources = result.externalSources || [];
-        walker(iterator);
+        walker(it);
       });
     };
     walker(iterator);
@@ -52,8 +49,8 @@ export default function () {
   }, function (callback) {
     // 遍历doneFunctions
     const iterator = doneFunctions.values();
-    const walker = (iterator) => {
-      const item = iterator.next();
+    const walker = (it) => {
+      const item = it.next();
       if (item.done) {
         return callback();
       }
@@ -64,7 +61,7 @@ export default function () {
         page.externalSources = result.externalSources || [];
         const html = await page.outputHTML();
         this.push(html);
-        walker(iterator);
+        walker(it);
       });
     };
     walker(iterator);
@@ -77,7 +74,7 @@ function getPluginByType(type) {
     printLog.error(`plugin of ${type} not defined`);
     process.exit(0);
   }
-  const module = require(path.resolve(process.cwd(), plugin))
+  const module = require(path.resolve(process.cwd(), plugin));
   if (typeof module === 'function') {
     return {
       transform: module,

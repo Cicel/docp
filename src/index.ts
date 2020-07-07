@@ -8,6 +8,7 @@ import docpConfig from './model/docp-config';
 import inquirer from 'inquirer';
 import { inputOverride, inputRootDir, inputOutDir } from './prompt-action';
 import { printLog } from './utils';
+import filters from './filters';
 
 export async function init(hasConfig) {
   if (hasConfig) {
@@ -17,8 +18,8 @@ export async function init(hasConfig) {
     }
   }
   const { rootDir, outDir } = await inquirer.prompt([inputRootDir, inputOutDir]);
-  docpConfig.rootDir = rootDir
-  docpConfig.outDir = outDir
+  docpConfig.rootDir = rootDir;
+  docpConfig.outDir = outDir;
   docpConfig.outputConfigFile();
   printLog.success('init done!');
 }
@@ -27,7 +28,7 @@ export function dev() {
   // start server
   startServer();
   // first build
-  vfs.src(docpConfig.getFilePath()).pipe(parseMarkdown()).pipe(devMode());
+  vfs.src(docpConfig.getFilePath()).pipe(filters()).pipe(parseMarkdown()).pipe(devMode());
   // watch
   watch(docpConfig.getFileDir(), (evt, filePath) => {
     if (filePath.split('.').pop() !== 'md') {

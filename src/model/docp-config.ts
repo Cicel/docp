@@ -7,6 +7,7 @@ const configFileName = 'docp.config.js';
 class DocpConfig {
   rootDir: string = ''
   outDir: string = ''
+  summary: string = 'summary.md'
   file: string = ''
   port: number = 3000
   configPath: string = ''

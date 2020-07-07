@@ -10,7 +10,7 @@ export default function () {
     printLog.info('page at http://127.0.0.1:' + docpConfig.port + '/' + file.stem + '.html');
     callback();
   }, function (callback) {
-    copyAssetsToDist()
+    copyAssetsToDist();
     callback();
   });
 }

@@ -1,78 +1,60 @@
 body {
-  width: 1280px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 30px;
+  box-sizing: border-box;
   display: flex;
 }
 
-.sidebar {
-  position: relative;
-  margin-left: 60px;
-  position: relative;
-  height: 100%;
-}
-
-.sidebar-bg {
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  background: #f7f7f7;
-  z-index: 2;
-  top: 0;
-}
-
-.docp-menu {
+#docp-menu {
   list-style: none;
   font-size: 14px;
   margin: 0;
   height: 100vh;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: auto;
   box-sizing: border-box;
-  background-color: #f7f7f7;
   flex-grow: 0;
   flex-shrink: 0;
-  flex-basis: 300px;
-  position: fixed;
-  z-index: 3;
+  width: 240px;
+  position: sticky;
+  top: 0;
   padding-bottom: 60px;
   box-sizing: border-box;
   -ms-overflow-style: none;
 }
 
-.docp-menu::-webkit-scrollbar {
+#docp-menu::-webkit-scrollbar {
   display: none;
 }
 
-.docp-menu li {
-  list-style: none;
-  color: #314659;
-  text-indent: 2rem;
-  line-height: 52px;
+#docp-menu ul {
+  padding: 0
 }
 
-.docp-menu li a {
-  text-decoration: none;
-  color: inherit;
-  white-space: nowrap;
+#docp-menu a {
   display: block;
-  width: 100%;
-  position: relative;
+  font-weight: normal;
 }
 
-.docp-menu li a.current {
-  font-weight: bold;
-  color: #1a1a1a;
+#docp-menu a.deep-2 {
+  color: #393939;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.8em;
+  padding: 12px 0;
 }
 
-.docp-menu li a.current:before {
-  content: '';
+#docp-menu a.deep-4 {
+  border: none;
+  color: #717171;
   display: block;
-  height: 50%;
-  width: 4px;
-  background-color: #42b983;
-  position: absolute;
-  top: 25%;
+  font-size: 14px;
+  padding: 12px;
+  line-height: 1.2em;
+}
+
+#docp-menu a.current {
+  font-weight: 500;
+  color: #42b983;
 }
 
 .markdown-body {
@@ -82,6 +64,7 @@ body {
   box-sizing: border-box;
   -ms-overflow-style: none;
   padding-bottom: 4em;
+  margin-left: 4em;
 }
 
 .markdown-body::-webkit-scrollbar {

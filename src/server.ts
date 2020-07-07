@@ -28,7 +28,7 @@ export default function () {
         res.write(data);
         res.end();
       }
-    })
+    });
   });
 
   server.listen(Number(docpConfig.port), '127.0.0.1', function () {

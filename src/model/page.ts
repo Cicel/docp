@@ -41,16 +41,25 @@ export default class Page {
     // 添加内容
     document.querySelector('#slot').innerHTML = this.contentFile!.contents!.toString();
     if (Page.globalSummaryFile !== null) {
-      const summaryDOM = new JSDOM(Page.globalSummaryFile!.contents?.toString());
+      const summaryDOM = new JSDOM(Page.globalSummaryFile.contents?.toString());
+      // 遍历summaryDOM
       const list: any = summaryDOM?.window.document.querySelectorAll('a');
+      const root: any = summaryDOM?.window.document.querySelector('ul');
       for (let i = 0; i < list.length; i++) {
+        let element = list[i];
+        let deep = 0;
+        while(element !== root) {
+          element = element.parentElement;
+          deep = deep + 1;
+        }
+        list[i].classList.add('deep-' + deep);
         if (list[i].href.indexOf(encodeURIComponent(this.contentFile!.stem)) > -1) {
           list[i].classList.add('current');
           break;
         }
       }
       // summaryDOM.querySelector()
-      document.querySelector('.docp-menu').innerHTML = summaryDOM.window.document.body.innerHTML;
+      document.querySelector('#docp-menu').innerHTML = summaryDOM.window.document.body.innerHTML;
     } else {
       // 无目录内容居中
       document.querySelector('.markdown-body').style = 'margin: 0 auto;'
