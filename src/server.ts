@@ -4,7 +4,7 @@ import path from 'path';
 import mime from 'mime';
 import docpConfig from './model/docp-config';
 import { printLog } from './utils';
-import { getFileFromMem } from './op-memfs';
+import fs from 'fs';
 
 export default function () {
   const server = http.createServer(function (req: any, res) {
@@ -17,20 +17,24 @@ export default function () {
       // 返回 false 表示, 客户端想要的 不是 静态文件
       res.end();
     }
+    let filePath = '';
+    if (ext === '.html') {
+      filePath = '/memfs' + urlPathname;
+    } else {
+      filePath = path.resolve(__dirname, '../template') + urlPathname;
+    }
     // 读取静态文件
-    getFileFromMem(urlPathname, (err, data) => {
-      if (err) {
-        res.writeHead(404, { "Content-Type": "text/plain" });
-        res.write("404 - NOT FOUND");
-        res.end();
-      } else {
-        res.writeHead(200, { "Content-Type": mimeType });
-        res.write(data);
-        res.end();
-      }
-    });
+    try {
+      const data = fs.readFileSync(filePath);
+      res.writeHead(200, { "Content-Type": mimeType });
+      res.write(data);
+      res.end();
+    } catch (err) {
+      res.writeHead(404, { "Content-Type": "text/plain" });
+      res.write("404 - NOT FOUND \n" + "MSG: " + err);
+      res.end();
+    }
   });
-
   server.listen(Number(docpConfig.port), '127.0.0.1', function () {
     printLog.info('server start');
   });

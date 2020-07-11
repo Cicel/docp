@@ -4,9 +4,9 @@ import { MarkedOption } from '../typings/global';
 
 const configFileName = 'docp.config.js';
 
-class DocpConfig {
+export class DocpConfig {
   rootDir: string = ''
-  outDir: string = ''
+  outDir: string = 'docsite'
   summary: string = 'summary.md'
   file: string = ''
   port: number = 3000
@@ -34,6 +34,7 @@ class DocpConfig {
       plugins: this.plugins
     }
     const result = 'module.exports = ' + JSON.stringify(output, null, 2)
+    console.log(result)
     fs.outputFileSync(this.getConfigFileDir(), result);
   }
 

@@ -13,7 +13,6 @@ import docpConfig from './model/docp-config';
 import path from 'path';
 
 const doneFunctions: Array<any> = [];
-
 export default function () {
   return through2.obj(async function (file: Vinyl, enc: string, callback: Function) {
     const page = new Page();

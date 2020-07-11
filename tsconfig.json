@@ -11,17 +11,12 @@
     "noUnusedParameters": false,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "experimentalDecorators": true,
     "skipLibCheck": true,
     "strict": true,
     "noImplicitAny": false,
     "rootDir": "src",
     "outDir": "lib",
-    "composite": true,
-    "importHelpers": true,
-    "allowSyntheticDefaultImports": true,
-    "resolveJsonModule": true,
-    "tsBuildInfoFile": ".tsbuildinfo"
+    "resolveJsonModule": true
   },
   "include": [
     "src/**/**/**/*"

@@ -1,12 +1,11 @@
 #!/usr/bin/env node --no-warnings
-import program from 'commander';
 import process from 'process';
 import { dev, build, init } from './index';
 import docpConfig from './model/docp-config';
 import { printLog } from './utils';
+import program from 'commander';
 
 const { version } = require('../package.json');
-
 // 覆盖原始方法，提供自定义help info
 program.helpOption('-phi, --primary-help-indo', 'primary help info');
 
@@ -76,10 +75,8 @@ if (script === 'build') {
 
 process.on('uncaughtException', function (err: any) {
   printLog.error(err);
-  process.exit(0);
 });
 
 process.on('unhandledRejection', function (err: any) {
   printLog.error(err);
-  process.exit(0);
 });

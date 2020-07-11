@@ -1,4 +1,3 @@
-import path from 'path';
 import colors from 'colors';
 
 /**
@@ -15,39 +14,6 @@ export const getHightlightComponentByType = (type: string) => {
     return `assets/prism-${lowerType}.min.js`;
   }
   return null;
-};
-
-export const copyFolderRecursiveSync = (source, targetFolder, fs) => {
-  let files: Array<string> = [];
-  //check if folder needs to be created or integrated
-  if (!fs.existsSync(targetFolder)) {
-    fs.mkdirSync(targetFolder);
-  }
-
-  //copy
-  if (fs.lstatSync(source).isDirectory()) {
-    files = fs.readdirSync(source);
-    files.forEach(function (file) {
-      const curSource = path.join(source, file);
-      if (fs.lstatSync(curSource).isDirectory()) {
-        copyFolderRecursiveSync(curSource, targetFolder, fs);
-      } else {
-        copyFileSync(curSource, targetFolder);
-      }
-    });
-  }
-
-  function copyFileSync(source, target) {
-    let targetFile = target;
-    //if target is a directory a new file with the same name will be created
-    if (fs.existsSync(target)) {
-      if (fs.lstatSync(target).isDirectory()) {
-        targetFile = path.join(target, path.basename(source));
-      }
-    }
-
-    fs.writeFileSync(targetFile, fs.readFileSync(source));
-  }
 };
 
 export const printLog = {
