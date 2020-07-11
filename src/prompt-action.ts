@@ -11,7 +11,7 @@ export const inputOutDir = {
   type: 'input',
   name: 'outDir',
   message: colors.white('directory for output files:'),
-  default: 'docsite'
+  default: './docsite'
 };
 
 export const inputOverride = {

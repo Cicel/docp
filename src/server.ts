@@ -19,7 +19,7 @@ export default function () {
     }
     let filePath = '';
     if (ext === '.html') {
-      filePath = '/memfs' + urlPathname;
+      filePath = docpConfig.virtualDir + urlPathname;
     } else {
       filePath = path.resolve(__dirname, '../template') + urlPathname;
     }

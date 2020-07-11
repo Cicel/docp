@@ -8,6 +8,7 @@ export default function () {
     if (file.extname !== '.md') {
       return callback();
     }
+    // 先编译summary
     if (file.basename === docpConfig.summary) {
       result.unshift(file);
       return callback();

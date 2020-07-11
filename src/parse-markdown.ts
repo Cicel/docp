@@ -8,7 +8,7 @@
 import through2 from 'through2';
 import Vinyl from 'vinyl';
 import { printLog } from './utils';
-import Page, { PAGT_TYPE } from './model/page';
+import Page, { PAGE_TYPE } from './model/page';
 import docpConfig from './model/docp-config';
 import path from 'path';
 
@@ -19,7 +19,7 @@ export default function () {
     await page.generate(file);
     printLog.success(`compile ${file.basename} done `);
 
-    if (page.type === PAGT_TYPE.SUMMARY) {
+    if (page.type === PAGE_TYPE.SUMMARY) {
       return callback();
     }
 

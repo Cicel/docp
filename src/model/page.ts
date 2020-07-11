@@ -7,7 +7,7 @@ import fs from 'fs-extra';
 import { getHightlightComponentByType } from '../utils';
 import { ICode } from '../typings/global';
 
-export enum PAGT_TYPE {
+export enum PAGE_TYPE {
   SUMMARY,
   CONTENT
 }
@@ -21,12 +21,12 @@ export default class Page {
   externalSources: Array<string> = []
   execCodes: Map<string, Array<ICode>> = new Map()
   infoStrings:  Map<string, boolean> = new Map()
-  type = PAGT_TYPE.CONTENT
+  type = PAGE_TYPE.CONTENT
 
   async generate(markdownFile: Vinyl) {
     if (markdownFile.stem.toUpperCase() === 'SUMMARY') {
       Page.globalSummaryFile = await this.generateSummary(markdownFile)
-      this.type = PAGT_TYPE.SUMMARY
+      this.type = PAGE_TYPE.SUMMARY
       return
     }
     this.contentFile = await this.generatePage(markdownFile)
@@ -63,7 +63,7 @@ export default class Page {
     } else {
       // 无目录内容居中
       document.querySelector('.markdown-body').style = 'margin: 0 auto;'
-      document.querySelector('.sidebar').remove();
+      document.querySelector('#docp-menu').remove();
     }
     // 插入css样式
     commonStyles.forEach(href => {

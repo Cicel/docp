@@ -6,7 +6,7 @@ const configFileName = 'docp.config.js';
 
 export class DocpConfig {
   rootDir: string = ''
-  outDir: string = 'docsite'
+  outDir: string = './docsite'
   summary: string = 'summary.md'
   file: string = ''
   port: number = 3000
@@ -16,6 +16,7 @@ export class DocpConfig {
   styles: Array<string> = []
   marked: MarkedOption | null = null
   plugins: any = {}
+  virtualDir: string = '/memfs'
 
   getConfigFileDir() {
     return path.resolve(process.cwd(), this.configPath, configFileName)

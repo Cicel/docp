@@ -23,6 +23,7 @@ export async function init(hasConfig) {
     if (override === false) {
       return;
     }
+    // reset docpConfig
     newConfig = new DocpConfig();
   }
   const { rootDir, outDir } = await inquirer.prompt([inputRootDir, inputOutDir]);
@@ -34,17 +35,16 @@ export async function init(hasConfig) {
 
 export function dev() {
   // create virtual fs
-  const virtualDir = '/memfs';
   ufs.use(vol as any).use({ ...fs });
   patchFs(ufs);
-  fs.mkdirSync(virtualDir);
+  fs.mkdirSync(docpConfig.virtualDir);
   // start server
   startServer();
   // first build
   vfs.src(docpConfig.getFilePath())
     .pipe(filters())
     .pipe(parseMarkdown())
-    .pipe(dest(virtualDir))
+    .pipe(dest(docpConfig.virtualDir))
     .pipe(printURL());
   // watch
   watch(docpConfig.getFileDir(), (evt, filePath) => {
@@ -55,7 +55,12 @@ export function dev() {
       printLog.warn(filePath + ' removed');
       return;
     }
-    vfs.src(filePath).pipe(parseMarkdown()).pipe(dest(virtualDir));
+    let source = vfs.src(filePath)
+    // summary变更触发全量更新
+    if (filePath.toLowerCase() === 'summary.md') {
+      source = vfs.src(docpConfig.getFilePath())
+    }
+    source.pipe(filters()).pipe(parseMarkdown()).pipe(dest(docpConfig.virtualDir));
   });
 }
 
