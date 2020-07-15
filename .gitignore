@@ -4,8 +4,6 @@ dest
 .vscode
 .DS_Store
 example
-docs
-docp.config.js
 lib
 .tsbuildinfo
 todo.txt

@@ -54,7 +54,6 @@ export class DocpConfig {
     const output: any = {
       rootDir: this.rootDir,
       outDir: this.outDir,
-      template: this.template,
       plugins: this.plugins
     };
     const result = 'module.exports = ' + stringify(output, null, 2);
@@ -63,7 +62,7 @@ export class DocpConfig {
 
   getFilePath() {
     if (this.file) {
-      return this.file;
+      return path.resolve(process.cwd(), this.file);
     }
     if (this.rootDir) {
       return path.resolve(this.rootDir, '*.md');
@@ -73,10 +72,10 @@ export class DocpConfig {
 
   getFileDir() {
     if (this.file) {
-      return this.file;
+      return path.resolve(process.cwd(), this.file);
     }
     if (this.rootDir) {
-      return this.rootDir;
+      return path.resolve(this.rootDir);
     }
     return process.cwd();
   }
