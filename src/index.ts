@@ -70,7 +70,7 @@ export function build() {
     .pipe(parseMarkdown())
     .pipe(dest(docpConfig.outDir))
     .on('finish', () => {
-      const outputDir = path.resolve(__dirname, docpConfig.outDir);
+      const outputDir = path.resolve(process.cwd(), docpConfig.outDir);
       fsExtra.copySync(path.resolve(__dirname, '../template/assets'), outputDir + '/assets');
       printLog.success('website generated at: ' + outputDir);
     });
