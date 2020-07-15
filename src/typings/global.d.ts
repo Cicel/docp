@@ -1,9 +1,9 @@
 import Vinyl from 'vinyl';
 
 interface MarkedOption {
-  baseUrl: string,
-  breaks: boolean,
-  gfm: boolean
+  breaks?: boolean;
+  gfm?: boolean;
+  renderer?: object;
 }
 
 interface DocpConfig {
@@ -13,9 +13,9 @@ interface DocpConfig {
   styles: Array<string>;
 }
 
-interface ICode {
-  origin: Vinyl | null,
-  containerId: string,
-  type: string,
-  value: string
+interface ExecableCode {
+  origin: Vinyl | null;
+  containerId: string;
+  type: string;
+  value: string;
 }

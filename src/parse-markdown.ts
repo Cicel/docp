@@ -37,7 +37,7 @@ export default function () {
       if (plugin.done) {
         doneFunctions.push({ page: page, done: plugin.done });
       }
-      plugin.transform(item.value[1], (result: any = {}) => {
+      plugin.transform(item.value[1], plugin.options, (result: any = {}) => {
         page.inlineSources = result.inlineSources || [];
         page.externalSources = result.externalSources || [];
         walker(it);
@@ -71,23 +71,34 @@ function getPluginByType(type) {
   const plugin = docpConfig.plugins[type];
   if (!plugin) {
     printLog.error(`plugin of ${type} not defined`);
-    process.exit(0);
+    process.exit(0)
   }
-  const module = require(path.resolve(process.cwd(), plugin));
+  let module: any = null
+  let options = {}
+  // 字符串直接require
+  if (typeof plugin === 'string') {
+    module = require(path.resolve(process.cwd(), plugin));
+  }
+  // 数组解析path和参数
+  if (Array.isArray(plugin)) {
+    module = require(path.resolve(process.cwd(), plugin[0]));
+    options = plugin[1] || {}
+  }
   if (typeof module === 'function') {
     return {
       transform: module,
+      options: options,
       done: null
     };
   }
   if (typeof module.transform !== 'function') {
     printLog.error(`plugin of ${type} must contain transform function`);
-    process.exit(0);
   }
   const transform = module.transform;
   const done = module.done || null;
   return {
     transform,
+    options,
     done
   };
 }

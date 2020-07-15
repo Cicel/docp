@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+  <title id="#docp-title"></title>
   <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1, maximum-scale=1">
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="ie=edge" />
@@ -11,34 +12,54 @@
   <link rel="stylesheet" href="assets/prism-line-numbers.min.css">
 </head>
 
-<body class="unresolved">
-  <div id="docp-menu"></div>
-  <div class="markdown-body">
-    <div id="slot"></div>
+<body>
+  <div id="docp-menu">
+    <!-- display when max-width less 1024 -->
+    <div class="docp-menu-header">
+      <div class="docp-hamburger">
+        <div class="docp-line1"></div>
+        <div class="docp-line2"></div>
+        <div class="docp-line3"></div>
+      </div>
+    </div>
+  </div>
+  <!-- className markdown-body used by themes style-->
+  <div id="docp-content" class="markdown-body">
   </div>
   <p id="docp-support">Powered by <a rel="noopener noreferrer" href="https://github.com/cicel/docp" target="_blank">docp</a></p>
   <script src="assets/prism.min.js"></script>
   <script src="assets/prism-line-numbers.min.js"></script>
 </body>
 <script>
+  // hamburger button when max-width less 1024
+  var menu = document.querySelector('#docp-menu')
+  var hamburger = document.querySelector('.docp-hamburger')
+  if (hamburger) {
+    hamburger.addEventListener('click', function() {
+      // add/remove active status to hamburger btn
+      if (hamburger.classList.contains('active')) {
+        hamburger.classList.remove('active')
+        menu.classList.remove('show')
+      } else {
+        hamburger.classList.add('active')
+        menu.classList.add('show')
+      }
+    })
+  }
+
   document.body.addEventListener('click', (e) => {
     let target = e.target
+    let codeBlock = target.previousElementSibling
     // fliter
     if (!target.classList.contains('docp-control-block')) {
       return
     }
     // change btn state
-    if (target.classList.contains('unfold')) {
-      target.classList.remove('unfold')
-    } else {
-      target.classList.add('unfold')
-    }
-
-    let codeBlock = target.previousElementSibling
-    // change codeBlock state
-    if (codeBlock.classList.contains('show')) {
+    if (target.classList.contains('active')) {
+      target.classList.remove('active')
       codeBlock.classList.remove('show')
     } else {
+      target.classList.add('active')
       codeBlock.classList.add('show')
     }
   })

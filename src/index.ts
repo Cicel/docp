@@ -55,10 +55,10 @@ export function dev() {
       printLog.warn(filePath + ' removed');
       return;
     }
-    let source = vfs.src(filePath)
+    let source = vfs.src(filePath);
     // summary变更触发全量更新
     if (filePath.toLowerCase() === 'summary.md') {
-      source = vfs.src(docpConfig.getFilePath())
+      source = vfs.src(docpConfig.getFilePath());
     }
     source.pipe(filters()).pipe(parseMarkdown()).pipe(dest(docpConfig.virtualDir));
   });

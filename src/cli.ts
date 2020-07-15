@@ -45,18 +45,14 @@ if (process.argv.length === 2 || process.argv.indexOf('--help') > -1 || process.
 }
 
 // argv转config
-Object.keys(docpConfig).forEach(key => {
-  if (program[key] !== undefined) {
-    docpConfig[key] = program[key];
-  }
-});
+docpConfig.concatConfigs(program);
 
 const hasConfig = docpConfig.hasConfigFile();
 // 存在配置文件优先使用
 if (hasConfig) {
   const configFile = docpConfig.getConfigFileDir();
   const docpConfigFile = require(configFile);
-  Object.assign(docpConfig, docpConfigFile);
+  docpConfig.concatConfigs(docpConfigFile);
 }
 
 const script = process.argv[2];

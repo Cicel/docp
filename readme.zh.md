@@ -2,8 +2,6 @@
 
 `Docp`是一个将markdown转换为Web的工具，类似[gitbook](https://www.gitbook.com/)和[vuepress](https://github.com/vuejs/vuepress)。与他们不同的是`Docp`提供了一种机制可以执行代码块中的代码。这将为你的文档站点提供极强的变现力！
 
-
-
 ## 快速开始
 
 `Docp`是开箱即用的。指明需要预览的文件或目录，执行如下命令即可：
@@ -205,12 +203,9 @@ module.exports = {
 }
 ```
 
-
-
 最后在markdown中关联flowchart
 
-```markdown
-​```javascript --exec=flowchart
+```javascript --exec=flowchart --show
 st=>start: Start:>http://www.google.com[blank]
 e=>end:>http://www.baidu.com
 op1=>operation: My Operation
@@ -219,18 +214,10 @@ cond=>condition: Yes
 or No?:>http://www.google.com
 io=>inputoutput: catch something...
 para=>parallel: parallel tasks
-
 st->op1->cond
 cond(yes)->io->e
 cond(no)->para
 para(path1, bottom)->sub1(right)->op1
 para(path2, top)->op1
-​```
 ```
-
-
-
-效果如图所示：
-
-<img src="http://img.tanghb.cn/20200706192720.jpg " />
 

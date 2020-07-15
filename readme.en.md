@@ -2,8 +2,6 @@
 
 Docp is a documentation tool that compiles markdown to a  website. It provides the ability to execute JavaScript witch write in markdown. That means  you can preview any JavaScript even React or Vue！
 
-[Document](https://cicel.github.io/docp/readme.en.html) | [中文文档](https://cicel.github.io/docp/readme.zh.html)
-
 ## Quick Start
 
 `Docp` is out of box. Specify the markdown file or directory and execute the following command:
@@ -197,12 +195,9 @@ module.exports = {
 }
 ```
 
-
-
 Finally, associate exec type in markdown
 
-```markdown
-​```javascript --exec=flowchart
+```javascript --exec=flowchart --show
 st=>start: Start:>http://www.google.com[blank]
 e=>end:>http://www.baidu.com
 op1=>operation: My Operation
@@ -211,15 +206,9 @@ cond=>condition: Yes
 or No?:>http://www.google.com
 io=>inputoutput: catch something...
 para=>parallel: parallel tasks
-
 st->op1->cond
 cond(yes)->io->e
 cond(no)->para
 para(path1, bottom)->sub1(right)->op1
 para(path2, top)->op1
-​```
 ```
-
-
-![](http://img.tanghb.cn/20200706192720.jpg)
-
