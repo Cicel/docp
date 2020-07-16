@@ -3,7 +3,7 @@ import marked from 'marked';
 import { JSDOM } from "jsdom";
 import docpConfig from './docp-config';
 import path from 'path';
-import fs from 'fs-extra';
+import fs from 'fs';
 import { getHightlightComponentByType } from '../utils';
 import { ExecableCode } from '../typings/global';
 

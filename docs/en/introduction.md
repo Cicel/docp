@@ -1,6 +1,6 @@
 # Introduction
 
-Docp is a documentation tool that compiles markdown to a  website. It provides the ability to execute JavaScript witch write in markdown. That means  you can preview any JavaScript even React or Vue！
+Docp is a documentation tool that compiles markdown to a  website. It provides the ability to execute JavaScript which write in markdown. That means  you can preview any JavaScript even React or Vue！
 
 ## Install
 

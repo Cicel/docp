@@ -1,6 +1,6 @@
 {
   "name": "docp",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "a tool that exec javascript in markdown",
   "main": "lib/index.js",
   "bin": {
@@ -16,8 +16,7 @@
     "build": "tsc --build tsconfig.json",
     "lint": "eslint src/** --quiet",
     "lint:fix": "eslint src/**/*.ts --fix",
-    "doc:zh": "docp build --rootDir ./docs/zh-cn",
-    "doc:en": "docp build --rootDir ./docs/en",
+    "doc": "docp build --rootDir ./docs/zh-cn --outDir ./zh-cn && docp build --rootDir ./docs/en --outDir ./en",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "cicel",
@@ -34,6 +33,7 @@
     "marked": "^1.1.0",
     "memfs": "^3.2.0",
     "mime": "^2.4.4",
+    "mkdirp": "^1.0.4",
     "node-watch": "^0.6.3",
     "typescript": "^3.8.3",
     "unionfs": "^4.4.0",
