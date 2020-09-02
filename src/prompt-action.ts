@@ -17,6 +17,6 @@ export const inputOutDir = {
 export const inputOverride = {
   type: 'confirm',
   name: 'override',
-  message: colors.white('docp.config.json already exists, overwrite?'),
+  message: colors.white('docp.config.js already exists, overwrite?'),
   default: 'N'
 };

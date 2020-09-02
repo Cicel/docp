@@ -1,51 +1,69 @@
 import Vinyl from 'vinyl';
 import marked from 'marked';
 import { JSDOM } from "jsdom";
-import { ICode } from '../const/interface';
-import { docpConfig } from './docp-config';
+import docpConfig from './docp-config';
 import path from 'path';
-import fs from 'fs-extra';
+import fs from 'fs';
 import { getHightlightComponentByType } from '../utils';
+import { ExecableCode } from '../typings/global';
+
+export enum PAGE_TYPE {
+  SUMMARY,
+  CONTENT
+}
 
 export default class Page {
-  static codeMap: Map<string, Array<ICode>> = new Map()
   static globalSummaryFile: Vinyl | null = null
   contentFile: Vinyl | null = null
-  inlineSources: Array<string> = []
-  externalSources: Array<string> = []
+  infoStrings: Map<string, boolean> = new Map()
+  type = PAGE_TYPE.CONTENT
+  execCodes: Array<ExecableCode> = []
+  template: string = fs.readFileSync(path.resolve(docpConfig.template)).toString();
 
   async generate(markdownFile: Vinyl) {
     if (markdownFile.stem.toUpperCase() === 'SUMMARY') {
-      Page.globalSummaryFile = await this.generateSummary(markdownFile)
-      return
+      Page.globalSummaryFile = await this.generateSummary(markdownFile);
+      this.type = PAGE_TYPE.SUMMARY;
+      return;
     }
-    this.contentFile = await this.generatePage(markdownFile)
+    this.contentFile = await this.generatePage(markdownFile);
   }
 
-  outputHTML(): Vinyl | null {
+  outputHTML(): Vinyl {
     const commonScripts = docpConfig.scripts;
     const commonStyles = docpConfig.styles;
-
-    const template = fs.readFileSync(path.resolve(process.cwd(), docpConfig.template)).toString();
-    const document = new JSDOM(template).window.document;
+    const document = new JSDOM(this.template).window.document;
 
     // 添加内容
-    document.querySelector('.markdown-body').innerHTML = this.contentFile!.contents!.toString();
+    document.querySelector('#docp-content').innerHTML = this.contentFile!.contents!.toString();
     if (Page.globalSummaryFile !== null) {
-      const summaryDOM = new JSDOM(Page.globalSummaryFile!.contents?.toString());
+      const summaryDOM = new JSDOM(Page.globalSummaryFile.contents?.toString());
+      // 遍历summaryDOM
       const list: any = summaryDOM?.window.document.querySelectorAll('a');
+      const root: any = summaryDOM?.window.document.querySelector('ul');
       for (let i = 0; i < list.length; i++) {
-        if (list[i].href.indexOf(encodeURIComponent(this.contentFile!!.stem)) > -1) {
+        let element = list[i];
+        let deep = 0;
+        while (element !== root) {
+          element = element.parentElement;
+          deep = deep + 1;
+        }
+        list[i].classList.add('deep-' + deep);
+        /**
+         * highlight menu item
+         * hrefName: helloworld.html -> helloworld
+         * contentFile.stem: helloworld.md -> helloworld
+         */
+        const hrefName = list[i].href.split('.')[0];
+        if (decodeURIComponent(hrefName) === decodeURIComponent(this.contentFile!.stem)) {
           list[i].classList.add('current');
-          break;
         }
       }
-      // summaryDOM.querySelector()
-      document.querySelector('.docp-menu').innerHTML = summaryDOM.window.document.body.innerHTML;
+      document.querySelector('#docp-menu').appendChild(root);
     } else {
       // 无目录内容居中
-      document.querySelector('.markdown-body').style = 'margin: 0 auto;'
-      document.querySelector('.sidebar').remove();
+      document.querySelector('#docp-content').style = 'margin: 0 auto;';
+      document.querySelector('#docp-menu').remove();
     }
     // 插入css样式
     commonStyles.forEach(href => {
@@ -60,47 +78,35 @@ export default class Page {
       document.querySelector('head').appendChild(script);
     });
     // 插入高亮代码
-    for (const type of Page.codeMap.keys()) {
+    for (const type of this.infoStrings.keys()) {
       const hightlightComponent = getHightlightComponentByType(type);
       // 插入高亮脚本
       if (hightlightComponent) {
         const script = document.createElement('script');
         script.src = hightlightComponent;
-        document.querySelector('body').appendChild(script);
+        document.body.appendChild(script);
       }
     }
-    // 插入inlineSource
-    this.inlineSources.forEach(source => {
-      const script = document.createElement('script');
-      script.innerHTML = source;
-      document.querySelector('body').appendChild(script);
-    })
-    // 插入externalSource
-    this.externalSources.forEach(src => {
-      const script = document.createElement('script');
-      script.src = src;
-      document.querySelector('head').appendChild(script);
-    })
-    const result = this.contentFile?.clone() || null;
-    if (result) {
-      result.contents = Buffer.from(document.querySelector('html').outerHTML);
-    }
-    return result
+    const result = this.contentFile!.clone();
+    result.contents = Buffer.from(document.documentElement.outerHTML);
+    return result;
   }
 
   private async generatePage(markdown: Vinyl): Promise<Vinyl> {
     const renderer = new marked.Renderer();
     const primaryRenderCode = renderer.code;
     renderer.code = this.generateCode(markdown, primaryRenderCode.bind(renderer));
-    const result = await marked(markdown.contents!.toString(), { renderer: renderer, gfm: true, breaks: true });
-    const file = markdown
-    file.contents = Buffer.from(result)
-    file.extname = '.html'
-    return file
+    const options = Object.assign({}, docpConfig.marked, { renderer: renderer });
+    const contents = markdown.contents!.toString();
+    const result = marked(contents, options);
+    const file = markdown;
+    file.contents = Buffer.from(result);
+    file.extname = '.html';
+    return file;
   }
 
   private async generateSummary(markdown: Vinyl): Promise<Vinyl> {
-    const result = await marked(markdown.contents!.toString());
+    const result = await marked(markdown.contents!.toString(), docpConfig.marked);
     const templateDOM = new JSDOM(result);
     const summary = templateDOM.window.document.querySelector('ul');
     if (!summary) {
@@ -111,37 +117,34 @@ export default class Page {
     for (let i = 0; i < list.length; i++) {
       list[i].href = list[i].href.replace('.md', '.html');
     }
-    const file = markdown
-    file.contents = Buffer.from(summary.outerHTML)
-    file.extname = '.html'
-    return file
+    const file = markdown;
+    file.contents = Buffer.from(summary.outerHTML);
+    file.extname = '';
+    return file;
   }
 
   private generateCode(markdown: Vinyl, primaryRenderCode): Function {
     let index = 0;
-    return (codeString: string, infostring: string = 'markup', escaped: string): string => {
+    return (codeString: string, infostring = 'markup', escaped: string): string => {
       index++;
-      const { lowerInfoString, isExecable, execType } = this.parseInfoString(infostring)
+      const { codeType, execType, showExecCode, unfoldExecCode } = this.parseInfoString(infostring);
       // 渲染代码块
-      let result = primaryRenderCode(codeString, lowerInfoString, escaped);
-
+      let result = primaryRenderCode(codeString, codeType, escaped);
+      // 记录infostring，插入hightlight代码
+      this.infoStrings.set(codeType, true);
       // 添加line-numbers
-      result = result.replace('<pre>', `<pre class="line-numbers language-${lowerInfoString}">`);
-      if (isExecable) {
+      result = result.replace('<pre>', `<pre class="line-numbers language-${codeType}">`);
+      if (execType) {
         const containerId = markdown.stem + '_' + index;
         const container = `<div id="${containerId}"></div>`;
-        const code: ICode = {
-          host: this,
+        result = this.wrapCodeBlock(container, result, showExecCode, unfoldExecCode);
+        const code: ExecableCode = {
           containerId: containerId,
           type: execType,
+          codeBlockString: result,
           value: codeString.replace('$CONTAINER_ID', `'${containerId}'`), // 替换占位符$CONTAINER_ID
-        }
-        if (!Page.codeMap.has(execType)) {
-          Page.codeMap.set(execType, [])
-        }
-        Page.codeMap.get(execType)!.push(code)
-        // 包裹codeblock容器
-        result = this.wrapCodeBlock(container, result);
+        };
+        this.execCodes.push(code);
       }
       return result;
     };
@@ -153,28 +156,52 @@ export default class Page {
    */
   private parseInfoString(infostring: string): any {
     const args = infostring.split('--');
-    const lowerInfoString = args[0].toLowerCase().trim();
-    const execString = args[1] || '';
-    const isExecable = execString.indexOf('exec') > -1; // todo 硬编码先
-    const execType = execString.split('=')[1] || 'default';
+    let codeType = '';
+    let execType = '';
+    let showExecCode: boolean = docpConfig.showExecCode;
+    let unfoldExecCode: boolean = docpConfig.unfoldExecCode;
+    args.forEach((item, index) => {
+      if (index === 0) {
+        codeType = item.toLowerCase().trim();
+        return;
+      }
+      // 可执行
+      if (item.startsWith('exec')) {
+        execType = (item.split('=')[1] || 'javascript').trim();
+        return;
+      }
+      // 可展示代码块
+      if (item.startsWith('show')) {
+        showExecCode = item.split('=')[1] === 'false' ? false : true;
+        return;
+      }
+      // 默认展开代码块
+      if (item.startsWith('unfold')) {
+        unfoldExecCode = item.split('=')[1] === 'false' ? false : true;
+      }
+    });
     return {
-      lowerInfoString: lowerInfoString,
-      isExecable: isExecable,
-      execType: execType
-    }
+      codeType,
+      execType,
+      showExecCode,
+      unfoldExecCode
+    };
   }
 
   /**
    * 为可执行区域组装结构
    */
-  private wrapCodeBlock(execBlock, codeBlock): string {
-    return `<div class="docp-block">
+  private wrapCodeBlock(execBlock, codeBlock, showExecCode, unfoldExecCode): string {
+    let result = `<div class="docp-block">
       <div class="docp-exec-block">${execBlock}</div>
-      <div class="docp-code-block">
-        ${codeBlock}
+        {{codeBlock}}
+        {{controlBlock}}
       </div>
-      <a class="docp-control-block"></a>
-    </div>
     `;
+    const codeBlockString = showExecCode ? `<div class="docp-code-block ${unfoldExecCode ? 'show' : ''}">${codeBlock}</div>` : '';
+    const controlBlockString = showExecCode ? `<div class="docp-control-block ${unfoldExecCode ? 'active' : ''}"></div>` : '';
+    result = result.replace('{{codeBlock}}', codeBlockString);
+    result = result.replace('{{controlBlock}}', controlBlockString);
+    return result;
   }
 }

@@ -4,7 +4,7 @@
 }
 
 html {
-  font-size: 14px;
+  font-size: 1em;
 }
 
 body {
@@ -20,6 +20,7 @@ body {
 .markdown-body p {
   line-height: 1.6rem;
   word-spacing: 0.05rem;
+  margin-top: 1em;
 }
 
 .markdown-body ol li {
@@ -143,7 +144,7 @@ ul,
 ol,
 dl,
 table {
-  margin: 0.8em 0;
+  margin: 1em 0;
 }
 
 li > ol,
@@ -308,8 +309,8 @@ table tr td:last-child {
 }
 
 .markdown-body code, tt {
-  margin: 0 2px;
-  padding: 2px 4px;
+  /* margin: 0 2px; */
+  padding: 2px 0;
   border-radius: 2px;
   font-family: Roboto Mono, Source Sans Pro, Monaco, courier, monospace !important;
   font-size: 0.92rem;

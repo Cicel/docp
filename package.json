@@ -1,7 +1,7 @@
 {
   "name": "docp",
-  "version": "0.7.0-test1",
-  "description": "a tool that exec javascript in markdown",
+  "version": "0.8.7",
+  "description": "a tool execute javascript in markdown",
   "main": "lib/index.js",
   "bin": {
     "docp": "lib/cli.js"
@@ -13,11 +13,10 @@
   ],
   "scripts": {
     "dev": "tsc --watch",
-    "build": "tsc --build tsconfig.json && npm run theme",
-    "theme:watch": "sass --watch --no-source-map template/typora.vue.scss template/assets/typora.vue.css",
-    "theme": "sass --no-source-map template/typora.vue.scss template/assets/typora.vue.css",
+    "build": "tsc --build tsconfig.json",
     "lint": "eslint src/** --quiet",
-    "lint:fix": "eslint src/*.ts --fix",
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "doc": "docp build --rootDir ./docs/zh-cn --outDir ./zh-cn && docp build --rootDir ./docs/en --outDir ./en",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "cicel",
@@ -29,13 +28,16 @@
     "fs-monkey": "^1.0.0",
     "glob": "^7.1.4",
     "inquirer": "^7.1.0",
+    "js-beautify": "^1.11.0",
     "jsdom": "^16.2.0",
-    "marked": "^0.7.0",
-    "memfs": "^2.16.1",
+    "marked": "^1.1.0",
+    "memfs": "^3.2.0",
     "mime": "^2.4.4",
+    "mkdirp": "^1.0.4",
     "node-watch": "^0.6.3",
+    "through2": "^4.0.2",
     "typescript": "^3.8.3",
-    "unionfs": "^4.3.2",
+    "unionfs": "^4.4.0",
     "vinyl": "^2.2.0",
     "vinyl-fs": "^3.0.3"
   },
@@ -44,6 +46,13 @@
     "@types/vinyl": "^2.0.4",
     "@typescript-eslint/eslint-plugin": "^2.22.0",
     "@typescript-eslint/parser": "^2.22.0",
-    "eslint": "^6.8.0"
+    "eslint": "^6.8.0",
+    "@babel/core": "^7.7.7",
+    "@babel/plugin-syntax-jsx": "^7.7.4",
+    "@babel/plugin-transform-react-display-name": "^7.7.4",
+    "@babel/plugin-transform-react-jsx": "^7.7.7",
+    "@babel/preset-env": "^7.7.7",
+    "@babel/preset-react": "^7.7.4",
+    "babel-loader": "^8.0.6"
   }
 }

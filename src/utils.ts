@@ -1,5 +1,3 @@
-import joinPath from 'memory-fs/lib/join';
-import path from 'path';
 import colors from 'colors';
 
 /**
@@ -12,60 +10,13 @@ export const getHightlightComponentByType = (type: string) => {
     'nginx', 'objectivec', 'php', 'powershell', 'python', 'ruby', 'sql',
     'swift', 'typescript', 'wasm'];
   const lowerType = type.toLowerCase();
+  if (lowerType === 'shell') {
+    return `assets/prism-bash.min.js`;
+  }
   if (types.indexOf(lowerType) > -1) {
     return `assets/prism-${lowerType}.min.js`;
   }
   return null;
-};
-
-// /**
-//  * memfs添加join方法
-//  * @param {fs} fs
-//  */
-// export const ensureWebpackMemoryFs = (fs) => {
-//   // Return it back, when it has Webpack 'join' method
-//   if (fs.join) {
-//     return fs;
-//   }
-
-//   // Create FS proxy, adding `join` method to memfs, but not modifying original object
-//   const nextFs = Object.create(fs);
-//   nextFs.join = joinPath;
-
-//   return nextFs;
-// };
-
-export const copyFolderRecursiveSync = (source, targetFolder, fs) => {
-  let files: Array<string> = [];
-  //check if folder needs to be created or integrated
-  if (!fs.existsSync(targetFolder)) {
-    fs.mkdirSync(targetFolder);
-  }
-
-  //copy
-  if (fs.lstatSync(source).isDirectory()) {
-    files = fs.readdirSync(source);
-    files.forEach(function (file) {
-      const curSource = path.join(source, file);
-      if (fs.lstatSync(curSource).isDirectory()) {
-        copyFolderRecursiveSync(curSource, targetFolder, fs);
-      } else {
-        copyFileSync(curSource, targetFolder);
-      }
-    });
-  }
-
-  function copyFileSync(source, target) {
-    let targetFile = target;
-    //if target is a directory a new file with the same name will be created
-    if (fs.existsSync(target)) {
-      if (fs.lstatSync(target).isDirectory()) {
-        targetFile = path.join(target, path.basename(source));
-      }
-    }
-
-    fs.writeFileSync(targetFile, fs.readFileSync(source));
-  }
 };
 
 export const printLog = {
@@ -89,4 +40,4 @@ export const printLog = {
     const tag = '[error]';
     console.log(tag, color(msg));
   }
-}
+};

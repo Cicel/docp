@@ -8,39 +8,27 @@
 import through2 from 'through2';
 import Vinyl from 'vinyl';
 import { printLog } from './utils';
-import Page from './model/page';
-import { docpConfig } from './model/docp-config';
+import Page, { PAGE_TYPE } from './model/page';
 
 export default function () {
-  const pages: Array<Page> = []
   return through2.obj(async function (file: Vinyl, enc: string, callback: Function) {
-    if (file.extname !== '.md') {
+    const page = new Page();
+    await page.generate(file);
+    printLog.success(`compile ${file.basename} done `);
+
+    if (page.type === PAGE_TYPE.SUMMARY) {
       return callback();
     }
-    const page = new Page()
-    await page.generate(file)
-    pages.push(page);
-    // log
-    printLog.success(`compile ${file.basename} done `);
-    callback();
-  }, async function (callback) {
-    const codeMap = Page.codeMap
-    for (const type of codeMap.keys()) {
-      const preset = docpConfig.presets[type];
-      if (!preset) {
-        printLog.error(`preset of ${type} not defined`)
-        process.exit(0)
-      }
-      if (typeof preset !== 'function') {
-        printLog.error(`preset of ${preset} not not a function`)
-        process.exit(0);
-      }
-      await preset(codeMap.get(type))
+
+    if (page.execCodes.length === 0) {
+      const html = page.outputHTML();
+      this.push(html);
+      return callback();
     }
-    for (let i = 0; i < pages.length; i++) {
-      const html = await pages[i].outputHTML()
-      this.push(html)
+
+    for (let i = 0; i < page.execCodes.length; i++) {
+      this.push({ page, execCode: page.execCodes[i] })
     }
     callback()
-  });
+  })
 }
