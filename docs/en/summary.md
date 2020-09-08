@@ -1,6 +1,11 @@
 # Summary
 
 * [Introduction](introduction.html)
-* [Execute javascript](exec-js.html)
-* [Create plugin](plugin.html)
+* [Quick start](quick-start.md)
+* [Page configuration](page-configuration.md)
+* [Options](options.md)
+* [Advanced]()
+  * [Custom template](custom-template.md)
+  * [Plugins](plugins.md)
+  * [Custom plugins](custom-plugins.md)
 

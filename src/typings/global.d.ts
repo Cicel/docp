@@ -1,5 +1,3 @@
-import Vinyl from 'vinyl';
-
 interface MarkedOption {
   breaks?: boolean;
   gfm?: boolean;
@@ -18,4 +16,16 @@ interface ExecableCode {
   containerId: string;
   type: string;
   value: string;
+}
+
+interface PageHeader {
+  name: string;
+  logo: string;
+  navigation: Array<Nav>;
+}
+
+interface Nav {
+  value: string;
+  href: string;
+  target: string;
 }

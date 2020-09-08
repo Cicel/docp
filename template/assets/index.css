@@ -1,13 +1,56 @@
-body {
-  max-width: 1400px;
-  margin: 0 auto;
+.main {
   box-sizing: border-box;
   display: flex;
+  justify-content: center;
   position: relative;
+  padding: 0 32px;
+}
+
+#docp-header {
+  display: flex;
+  height: 60px;
+  margin-bottom: 20px;
+  padding: 0 32px;
+  box-shadow: 0 3px 8px 0 rgba(116, 129, 141, 0.1);
+  align-items: center;
+  justify-content: center;
+}
+
+.docp-logo-wrapper {
+  display: flex;
+  align-items: center;
+  width: 240px;
+  flex-shrink: 0;
+}
+
+.docp-logo {
+  max-width: 240px;
+  max-height: 36px;
+}
+
+.docp-name {
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.docp-nav {
+  width: 1023px;
+  box-sizing: border-box;
+  overflow-x: auto;
+  min-width: 360px;
+  text-align: right;
+}
+
+.docp-nav a {
+  margin-right: 32px;
+}
+
+.docp-nav a:last-child {
+  margin-right: 0;
 }
 
 #docp-menu {
-  height: 100vh;
+  height: calc(100vh - 80px);
   overflow: auto;
   box-sizing: border-box;
   flex-grow: 0;
@@ -17,7 +60,6 @@ body {
   top: 0;
   padding-bottom: 60px;
   font-size: 14px;
-  margin: 0 0 0 4em;
   -ms-overflow-style: none;
 }
 
@@ -66,10 +108,10 @@ body {
 #docp-content {
   width: 1023px;
   min-width: 360px;
-  min-height: 100vh;
+  min-height: calc(100vh - 80px);
   box-sizing: border-box;
   -ms-overflow-style: none;
-  padding: 0 2em 4em;
+  padding-bottom: 48px;
 }
 
 #docp-content::-webkit-scrollbar {
@@ -138,6 +180,9 @@ body {
 }
 
 @media (max-width: 1023px) {
+  #docp-header {
+    display: none;
+  }
   #docp-menu {
     width: 100%;
     position: fixed;
@@ -147,7 +192,6 @@ body {
     padding-bottom: 0;
     z-index: 99;
     height: 32px;
-    margin-left: 0;
     -ms-scroll-chaining: none;
     overscroll-behavior: contain;
     box-shadow: 0px 1px 4px #ccc;

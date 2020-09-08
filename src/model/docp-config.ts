@@ -1,11 +1,15 @@
 import path from 'path';
-import fs from 'fs-extra';
+import fse from 'fs-extra';
 import beautify from 'js-beautify';
-import { MarkedOption } from '../typings/global';
 
 const configFileName = 'docp.config.js';
 
 export class DocpConfig {
+  header: PageHeader = {
+    name: '',
+    logo: '',
+    navigation: []
+  }
   rootDir = ''
   outDir = './docsite'
   summary = 'summary.md'
@@ -46,7 +50,7 @@ export class DocpConfig {
 
   hasConfigFile() {
     const configFile = this.getConfigFileDir();
-    return fs.pathExistsSync(configFile);
+    return fse.pathExistsSync(configFile);
   }
 
   outputConfigFile() {
@@ -55,7 +59,7 @@ export class DocpConfig {
         outDir: '${this.outDir}',
         plugins: {}
       }`;
-    fs.outputFileSync(this.getConfigFileDir(), beautify.js(result, { 'indent_size': 2 }));
+    fse.outputFileSync(this.getConfigFileDir(), beautify.js(result, { 'indent_size': 2 }));
   }
 
   getFilePath() {
@@ -102,7 +106,7 @@ export class DocpConfig {
       if (modulePath) {
         const _path = path.resolve(modulePath);
         let module = null;
-        if (fs.existsSync(_path)) {
+        if (fse.existsSync(_path)) {
           // path esm or cjs
           module = require(_path).default || require(_path);
         } else {

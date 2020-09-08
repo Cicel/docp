@@ -2,10 +2,8 @@ import vfs from 'vinyl-fs';
 import watch from 'node-watch';
 import path from 'path';
 import inquirer from 'inquirer';
-import { vol } from 'memfs';
-import fs from 'fs';
-import fsExtra from 'fs-extra';
-import { ufs } from 'unionfs';
+import fs2 from './fs2';
+import fse from 'fs-extra';
 import parseMarkdown from './parse-markdown';
 import startServer from './server';
 import dest from './dest';
@@ -13,8 +11,10 @@ import docpConfig, { DocpConfig } from './model/docp-config';
 import { inputOverride, inputRootDir, inputOutDir } from './prompt-action';
 import { printLog } from './utils';
 import filters from './filters';
-import { patchFs } from 'fs-monkey';
 import printURL from './print-URL';
+
+// create virtual dir
+fs2.mkdirSync(docpConfig.virtualDir);
 
 export async function init(hasConfig) {
   let newConfig = docpConfig;
@@ -34,10 +34,6 @@ export async function init(hasConfig) {
 }
 
 export function serve() {
-  // create virtual fs
-  ufs.use(vol as any).use({ ...fs });
-  patchFs(ufs);
-  fs.mkdirSync(docpConfig.virtualDir);
   // start server
   startServer();
   // first build
@@ -62,11 +58,11 @@ export function serve() {
 
 export function build(finishHandler?: Function) {
   const outputDir = path.resolve(docpConfig.outDir)
-  if (fsExtra.pathExistsSync(outputDir)) {
-    fsExtra.removeSync(outputDir)
+  if (fse.pathExistsSync(outputDir)) {
+    fse.removeSync(outputDir)
   }
   return parse(docpConfig.getFilePath(), docpConfig.getOutputPath()).on('finish', () => {
-    fsExtra.copySync(path.resolve(__dirname, '../template/assets'), outputDir + '/assets');
+    fse.copySync(path.resolve(__dirname, '../template/assets'), outputDir + '/assets');
     printLog.success('website generated at: ' + outputDir);
     if (typeof finishHandler === 'function') {
       finishHandler()

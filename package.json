@@ -1,6 +1,6 @@
 {
   "name": "docp",
-  "version": "0.8.7",
+  "version": "0.8.9",
   "description": "a tool execute javascript in markdown",
   "main": "lib/index.js",
   "bin": {
@@ -25,7 +25,6 @@
     "colors": "^1.4.0",
     "commander": "^5.0.0",
     "fs-extra": "^8.1.0",
-    "fs-monkey": "^1.0.0",
     "glob": "^7.1.4",
     "inquirer": "^7.1.0",
     "js-beautify": "^1.11.0",
@@ -33,7 +32,6 @@
     "marked": "^1.1.0",
     "memfs": "^3.2.0",
     "mime": "^2.4.4",
-    "mkdirp": "^1.0.4",
     "node-watch": "^0.6.3",
     "through2": "^4.0.2",
     "typescript": "^3.8.3",
@@ -42,6 +40,8 @@
     "vinyl-fs": "^3.0.3"
   },
   "devDependencies": {
+    "@docp/react-plugin": "^1.0.0",
+    "docp": "^0.8.9",
     "@types/node": "^13.7.0",
     "@types/vinyl": "^2.0.4",
     "@typescript-eslint/eslint-plugin": "^2.22.0",

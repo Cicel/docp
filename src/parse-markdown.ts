@@ -13,7 +13,7 @@ import Page, { PAGE_TYPE } from './model/page';
 export default function () {
   return through2.obj(async function (file: Vinyl, enc: string, callback: Function) {
     const page = new Page();
-    await page.generate(file);
+    page.generate(file);
     printLog.success(`compile ${file.basename} done `);
 
     if (page.type === PAGE_TYPE.SUMMARY) {

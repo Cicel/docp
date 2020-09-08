@@ -5,7 +5,6 @@ import docpConfig from './docp-config';
 import path from 'path';
 import fs from 'fs';
 import { getHightlightComponentByType } from '../utils';
-import { ExecableCode } from '../typings/global';
 
 export enum PAGE_TYPE {
   SUMMARY,
@@ -19,23 +18,26 @@ export default class Page {
   type = PAGE_TYPE.CONTENT
   execCodes: Array<ExecableCode> = []
   template: string = fs.readFileSync(path.resolve(docpConfig.template)).toString();
+  DOMInstance = new JSDOM(this.template).window.document;
 
-  async generate(markdownFile: Vinyl) {
+  generate(markdownFile: Vinyl) {
     if (markdownFile.stem.toUpperCase() === 'SUMMARY') {
-      Page.globalSummaryFile = await this.generateSummary(markdownFile);
+      Page.globalSummaryFile = this.generateSummary(markdownFile);
       this.type = PAGE_TYPE.SUMMARY;
       return;
     }
-    this.contentFile = await this.generatePage(markdownFile);
+    this.contentFile = this.generatePage(markdownFile);
   }
 
   outputHTML(): Vinyl {
     const commonScripts = docpConfig.scripts;
     const commonStyles = docpConfig.styles;
-    const document = new JSDOM(this.template).window.document;
 
     // 添加内容
-    document.querySelector('#docp-content').innerHTML = this.contentFile!.contents!.toString();
+    const contentContainer = this.DOMInstance.querySelector('#docp-content');
+    const menuContainer = this.DOMInstance.querySelector('#docp-menu');
+    const headerContainer = this.DOMInstance.querySelector('#docp-header');
+    contentContainer.innerHTML = this.contentFile!.contents!.toString();
     if (Page.globalSummaryFile !== null) {
       const summaryDOM = new JSDOM(Page.globalSummaryFile.contents?.toString());
       // 遍历summaryDOM
@@ -59,40 +61,105 @@ export default class Page {
           list[i].classList.add('current');
         }
       }
-      document.querySelector('#docp-menu').appendChild(root);
+      menuContainer?.appendChild(root);
     } else {
       // 无目录内容居中
-      document.querySelector('#docp-content').style = 'margin: 0 auto;';
-      document.querySelector('#docp-menu').remove();
+      contentContainer.style = 'margin: 0 auto;';
+      menuContainer?.remove();
+    }
+
+    // 处理 header信息
+    const header = docpConfig.header;
+    let logoInfo = '';
+    if (header.logo) {
+      const img = `<img class="docp-logo" src="${header.logo}"/>`;
+      logoInfo = logoInfo + img;
+    }
+    if (header.name) {
+      const name = `<div class="docp-name">${header.name}</div>`;
+      logoInfo = logoInfo + name;
+    }
+    if (logoInfo.length > 0) {
+      headerContainer.innerHTML = `<div class="docp-logo-wrapper">${logoInfo}</div>`;
+    }
+    if (docpConfig.header.navigation) {
+      const navigation = this.DOMInstance.createElement('div');
+      navigation.className = 'docp-nav';
+      docpConfig.header.navigation.forEach(nav => {
+        const link = this.DOMInstance.createElement('a');
+        link.textContent = nav.value;
+        link.href = nav.href;
+        link.target = nav.target || '';
+        navigation.appendChild(link);
+      });
+      headerContainer?.appendChild(navigation);
+    }
+
+    if (headerContainer?.childElementCount === 0) {
+      headerContainer?.remove();
     }
     // 插入css样式
-    commonStyles.forEach(href => {
-      const link = document.createElement('link');
-      link.href = href;
-      document.querySelector('head').appendChild(link);
-    });
+    this.addExternalStyles(commonStyles);
     // 插入js外链
-    commonScripts.forEach(src => {
-      const script = document.createElement('script');
-      script.src = src;
-      document.querySelector('head').appendChild(script);
-    });
+    this.addExternalScripts(commonScripts)
     // 插入高亮代码
-    for (const type of this.infoStrings.keys()) {
-      const hightlightComponent = getHightlightComponentByType(type);
-      // 插入高亮脚本
-      if (hightlightComponent) {
-        const script = document.createElement('script');
-        script.src = hightlightComponent;
-        document.body.appendChild(script);
+    this.infoStrings.forEach((value, key) => {
+      const hl = getHightlightComponentByType(key)
+      if (hl) {
+        this.addExternalScripts(hl)
       }
-    }
+    })
     const result = this.contentFile!.clone();
-    result.contents = Buffer.from(document.documentElement.outerHTML);
+    result.contents = Buffer.from(this.DOMInstance.documentElement.outerHTML);
     return result;
   }
 
-  private async generatePage(markdown: Vinyl): Promise<Vinyl> {
+  addExternalScripts(src: Array<string> | string) {
+    if (!Array.isArray(src)) {
+      src = [src]
+    }
+    for (let i = 0; i < src.length; i++) {
+      const script = this.DOMInstance.createElement('script');
+      script.src = src[i];
+      this.DOMInstance.head.appendChild(script);
+    }
+  }
+
+  addInlineScripts(value: Array<string> | string) {
+    if (!Array.isArray(value)) {
+      value = [value]
+    }
+    for (let i = 0; i < value.length; i++) {
+      const script = this.DOMInstance.createElement('script');
+      script.innerHTML = value[i];
+      this.DOMInstance.head.appendChild(script);
+    }
+  }
+
+  addExternalStyles(src: Array<string> | string) {
+    if (!Array.isArray(src)) {
+      src = [src]
+    }
+    for (let i = 0; i < src.length; i++) {
+      const link = this.DOMInstance.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = link[i];
+      this.DOMInstance.head.appendChild(link);
+    }
+  }
+
+  addInlineStyles(value: Array<string> | string) {
+    if (!Array.isArray(value)) {
+      value = [value]
+    }
+    for (let i = 0; i < value.length; i++) {
+      const style = this.DOMInstance.createElement('style');
+      style.innerHTML = value[i];
+      this.DOMInstance.head.appendChild(style);
+    }
+  }
+
+  private generatePage(markdown: Vinyl) {
     const renderer = new marked.Renderer();
     const primaryRenderCode = renderer.code;
     renderer.code = this.generateCode(markdown, primaryRenderCode.bind(renderer));
@@ -105,12 +172,12 @@ export default class Page {
     return file;
   }
 
-  private async generateSummary(markdown: Vinyl): Promise<Vinyl> {
-    const result = await marked(markdown.contents!.toString(), docpConfig.marked);
+  private generateSummary(markdown: Vinyl) {
+    const result = marked(markdown.contents!.toString(), docpConfig.marked);
     const templateDOM = new JSDOM(result);
     const summary = templateDOM.window.document.querySelector('ul');
     if (!summary) {
-      return Promise.reject(null);
+      return null;
     }
     // 替换href中连接后缀
     const list = summary.querySelectorAll('a');

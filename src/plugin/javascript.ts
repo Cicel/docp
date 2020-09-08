@@ -18,9 +18,9 @@ export default function (options) {
     iframe.setAttribute('srcdoc', value);
     wrapper.appendChild(iframe);
     if (pages.indexOf(page) === -1) {
-      const style = document.createElement('style')
-      style.innerHTML = 'iframe {width: 100%; border: none;}'
-      document.head.appendChild(style)
+      const style = document.createElement('style');
+      style.innerHTML = 'iframe {width: 100%; border: none;}';
+      document.head.appendChild(style);
       pages.push(page);
     }
     page.contentFile.contents = Buffer.from(document.documentElement.outerHTML);
