@@ -1,6 +1,6 @@
 {
   "name": "docp",
-  "version": "0.8.8",
+  "version": "0.8.9",
   "description": "a tool execute javascript in markdown",
   "main": "lib/index.js",
   "bin": {
@@ -41,7 +41,7 @@
   },
   "devDependencies": {
     "@docp/react-plugin": "^1.0.0",
-    "docp": "*",
+    "docp": "^0.8.9",
     "@types/node": "^13.7.0",
     "@types/vinyl": "^2.0.4",
     "@typescript-eslint/eslint-plugin": "^2.22.0",
