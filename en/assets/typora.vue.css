@@ -4,7 +4,7 @@
 }
 
 html {
-  font-size: 14px;
+  font-size: 1em;
 }
 
 body {
@@ -20,6 +20,7 @@ body {
 .markdown-body p {
   line-height: 1.6rem;
   word-spacing: 0.05rem;
+  margin-top: 1em;
 }
 
 .markdown-body ol li {
@@ -143,7 +144,7 @@ ul,
 ol,
 dl,
 table {
-  margin: 0.8em 0;
+  margin: 1em 0;
 }
 
 li > ol,
@@ -286,10 +287,6 @@ table tr td:last-child {
   background-color: #f2f2f2;
 }
 
-.markdown-body .CodeMirror-gutters {
-  border-right: none;
-}
-
 .markdown-body .md-fences {
   border: 1px solid #F4F4F4;
   -webkit-font-smoothing: initial;
@@ -303,18 +300,19 @@ table tr td:last-child {
   word-wrap: normal;
 }
 
-.markdown-body .CodeMirror-wrap .CodeMirror-code pre {
-  padding-left: 12px;
-}
-
 .markdown-body code, tt {
   margin: 0 2px;
-  padding: 2px 4px;
+  padding: 2px;
   border-radius: 2px;
   font-family: Roboto Mono, Source Sans Pro, Monaco, courier, monospace !important;
   font-size: 0.92rem;
   color: #e96900;
   background-color: #f8f8f8;
+}
+
+.markdown-body code[class*=language-] {
+  margin: 0;
+  padding: 0;
 }
 
 .markdown-body .md-footnote {
