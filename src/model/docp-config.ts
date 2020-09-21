@@ -5,13 +5,9 @@ import beautify from 'js-beautify';
 const configFileName = 'docp.config.js';
 
 export class DocpConfig {
-  header: PageHeader = {
-    name: '',
-    logo: '',
-    navigation: []
-  }
+  header: PageHeader | null = null
   rootDir = ''
-  outDir = './docsite'
+  outDir = 'docsite'
   summary = 'summary.md'
   file = ''
   port = 3000
@@ -36,11 +32,11 @@ export class DocpConfig {
 
   concatConfigs(newConfig) {
     Object.keys(newConfig).forEach(key => {
-      if (newConfig[key].toString() === '[object Object]') {
+      if (newConfig[key].toString() !== '[object Object]' || !this[key]) {
+        this[key] = newConfig[key];
+      } else {
         Object.assign(this[key], newConfig[key]);
-        return;
       }
-      this[key] = newConfig[key];
     });
   }
 

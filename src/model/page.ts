@@ -70,22 +70,28 @@ export default class Page {
 
     // 处理 header信息
     const header = docpConfig.header;
+    if (!header) {
+      headerContainer?.remove();
+    }
     let logoInfo = '';
-    if (header.logo) {
+    if (header?.logo) {
       const img = `<img class="docp-logo" src="${header.logo}"/>`;
       logoInfo = logoInfo + img;
     }
-    if (header.name) {
+    if (header?.name) {
       const name = `<div class="docp-name">${header.name}</div>`;
       logoInfo = logoInfo + name;
     }
     if (logoInfo.length > 0) {
-      headerContainer.innerHTML = `<div class="docp-logo-wrapper">${logoInfo}</div>`;
+      const logoWrapper = this.DOMInstance.createElement('div');
+      logoWrapper.className = "docp-logo-wrapper";
+      logoWrapper.innerHTML = logoInfo;
+      headerContainer?.appendChild(logoWrapper);
     }
-    if (docpConfig.header.navigation) {
+    if (header?.navigation) {
       const navigation = this.DOMInstance.createElement('div');
       navigation.className = 'docp-nav';
-      docpConfig.header.navigation.forEach(nav => {
+      header.navigation.forEach(nav => {
         const link = this.DOMInstance.createElement('a');
         link.textContent = nav.value;
         link.href = nav.href;
@@ -95,9 +101,6 @@ export default class Page {
       headerContainer?.appendChild(navigation);
     }
 
-    if (headerContainer?.childElementCount === 0) {
-      headerContainer?.remove();
-    }
     // 插入css样式
     this.addExternalStyles(commonStyles);
     // 插入js外链
