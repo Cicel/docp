@@ -36,7 +36,21 @@
 </li>
 </ul></div>
     <!-- className markdown-body used by themes style-->
-    <div id="docp-content" class="markdown-body"></div>
+    <div id="docp-content" class="markdown-body"><h1 id="custom-template">Custom template</h1>
+<p>Any html file can be used to replace the internal template. Specify the new template first:</p>
+<pre class="line-numbers language-javascript"><code class="language-javascript">module.exports = {
+  rootDir: './docs', 
+  outDir: './docsite', 
+  plugins: {},
+  template: 'new_template.html' // specify template file
+}</code></pre>
+<p>Then implements the inject point.</p>
+<h2 id="inject-point">Inject point</h2>
+<p>Inject point is the DOM elements that has the specified id. <code>Docp</code> will insert compiled result into these elements.</p>
+<p><strong>Header:</strong>  <code>#docp-header</code></p>
+<p><strong>Table of contents:</strong> <code>#docp-menu</code></p>
+<p><strong>Main contents:</strong> <code>#docp-content</code></p>
+</div>
     <p id="docp-support">Powered by <a rel="noopener noreferrer" href="https://github.com/cicel/docp" target="_blank">Docp</a></p>
   </div>
 

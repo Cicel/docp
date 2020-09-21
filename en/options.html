@@ -36,7 +36,97 @@
 </li>
 </ul></div>
     <!-- className markdown-body used by themes style-->
-    <div id="docp-content" class="markdown-body"></div>
+    <div id="docp-content" class="markdown-body"><h1 id="options">Options</h1>
+<p>Here is the list of options that  <code>Docp</code> supported.</p>
+<table>
+<thead>
+<tr>
+<th align="left">name</th>
+<th>supported scene</th>
+<th>type</th>
+<th>default value</th>
+<th>describe</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">rootDir</td>
+<td>command line args, configuration file</td>
+<td>string</td>
+<td>current directory</td>
+<td>Specifies the root directory of input files</td>
+</tr>
+<tr>
+<td align="left">outDir</td>
+<td>command line args, configuration file</td>
+<td>string</td>
+<td>docsite</td>
+<td>Specifies the directory for output files</td>
+</tr>
+<tr>
+<td align="left">file</td>
+<td>command line args, configuration file</td>
+<td>string</td>
+<td>N/A</td>
+<td>Specifies the file to be compiled. Mutually exclusive with rootDir</td>
+</tr>
+<tr>
+<td align="left">port</td>
+<td>command line args, configuration file</td>
+<td>number</td>
+<td>3000</td>
+<td>Specify local server port</td>
+</tr>
+<tr>
+<td align="left">configPath</td>
+<td>command line args</td>
+<td>string</td>
+<td>docp.config.js</td>
+<td>Specify the configuration file path when init</td>
+</tr>
+<tr>
+<td align="left">template</td>
+<td>command line args, configuration file</td>
+<td>string</td>
+<td>N/A</td>
+<td>Specify the HTML template to replace the built-in template</td>
+</tr>
+<tr>
+<td align="left">scripts</td>
+<td>configuration file</td>
+<td>Array&lt;string&gt;</td>
+<td>N/A</td>
+<td>External scripts included in HTML template, Commonly used for public libraries like React or Vue</td>
+</tr>
+<tr>
+<td align="left">styles</td>
+<td>configuration file</td>
+<td>Array&lt;string&gt;</td>
+<td>N/A</td>
+<td>External styles included in HTML template</td>
+</tr>
+<tr>
+<td align="left">marked</td>
+<td>configuration file</td>
+<td>object</td>
+<td>N/A</td>
+<td>Marked options</td>
+</tr>
+<tr>
+<td align="left">plugin</td>
+<td>configuration file</td>
+<td>object</td>
+<td>N/A</td>
+<td>Plugins for custom code</td>
+</tr>
+<tr>
+<td align="left">header</td>
+<td>configuration file</td>
+<td>object</td>
+<td>N/A</td>
+<td>Header of page</td>
+</tr>
+</tbody></table>
+</div>
     <p id="docp-support">Powered by <a rel="noopener noreferrer" href="https://github.com/cicel/docp" target="_blank">Docp</a></p>
   </div>
 

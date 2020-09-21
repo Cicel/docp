@@ -39,17 +39,17 @@
     <div id="docp-content" class="markdown-body"><h1 id="自定义模板">自定义模板</h1>
 <p>可以使用任意html文件替换内部模板。首先修改配置文件：</p>
 <pre class="line-numbers language-javascript"><code class="language-javascript">module.exports = {
-  rootDir: './docs', 
-  outDir: './docsite', 
+  rootDir: './docs',
+  outDir: './docsite',
   plugins: {},
   template: 'new_template.html' // specify template file
 }</code></pre>
 <p>其次请申明相关注入点。</p>
 <h2 id="注入点">注入点</h2>
 <p>注入点是具备固定id的DOM元素，Docp会将解析结果插入到这些DOM元素中。目前开放的注入点包括：顶部导航、菜单、内容区域。</p>
-<p><strong>顶部导航注入点：</strong><code>#docp-header</code></p>
+<p><strong>导航注入点：</strong><code>#docp-header</code></p>
 <p>导航信息来自<code>docp.config.js</code>的<code>header</code>属性，请参考<a href="./%E7%94%9F%E6%88%90%E9%A1%B6%E9%83%A8%E5%AF%BC%E8%88%AA.html">生成顶部导航</a>。</p>
-<p><strong>菜单注入点：</strong><code>#docp-menu</code></p>
+<p><strong>目录注入点：</strong><code>#docp-menu</code></p>
 <p>菜单信息来自<code>SUMMARY.md</code>，请参考<a href="./%E7%94%9F%E6%88%90%E7%9B%AE%E5%BD%95.html">生成目录</a>。</p>
 <p><strong>内容区域注入点：</strong><code>#docp-content</code></p>
 <p>该注入点必须提供。</p>
